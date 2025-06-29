@@ -28,7 +28,7 @@ class Parser {
 
   declaration() {
     try {
-      if (this.match(TokenType.FUNCTION)) return this.function('function');
+      if (this.match(TokenType.FUNCTION)) return this.functionDeclaration();
       if (this.match(TokenType.VAR)) return this.varDeclaration();
       return this.statement();
     } catch (error) {
@@ -37,10 +37,26 @@ class Parser {
     }
   }
 
-  function(kind) {
-    const name = this.consume(TokenType.IDENTIFIER, `Expected ${kind} name.`);
-    
-    this.consume(TokenType.LEFT_PAREN, `Expected '(' after ${kind} name.`);
+  functionDeclaration() {
+    const name = this.consume(TokenType.IDENTIFIER, "Expected function name.");
+    return this.functionBody(name);
+  }
+
+  functionExpression() {
+    return this.functionBody(null);
+  }
+
+  functionBody(name) {
+    this.consume(TokenType.LEFT_PAREN, "Expected '(' after function name.");
+    const parameters = this.parseParameters();
+    this.consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.");
+
+    this.consume(TokenType.LEFT_BRACE, "Expected '{' before function body.");
+    const body = this.block();
+    return new FunctionStmt(name, parameters, body);
+  }
+
+  parseParameters() {
     const parameters = [];
     if (!this.check(TokenType.RIGHT_PAREN)) {
       do {
@@ -50,11 +66,7 @@ class Parser {
         parameters.push(this.consume(TokenType.IDENTIFIER, "Expected parameter name."));
       } while (this.match(TokenType.COMMA));
     }
-    this.consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.");
-
-    this.consume(TokenType.LEFT_BRACE, `Expected '{' before ${kind} body.`);
-    const body = this.block();
-    return new FunctionStmt(name, parameters, body);
+    return parameters;
   }
 
   varDeclaration() {
@@ -297,6 +309,10 @@ class Parser {
 
     if (this.match(TokenType.IDENTIFIER)) {
       return new VariableExpr(this.previous());
+    }
+
+    if (this.match(TokenType.FUNCTION)) {
+      return this.functionExpression();
     }
 
     if (this.match(TokenType.LEFT_PAREN)) {

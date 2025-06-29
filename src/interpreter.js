@@ -33,6 +33,9 @@ class InertzUserFunction extends InertzCallable {
   }
 
   toString() {
+    if (this.declaration.name === null) {
+      return '<anonymous fn>';
+    }
     return `<fn ${this.declaration.name.lexeme}>`;
   }
 }
@@ -126,8 +129,10 @@ class Interpreter {
 
   visitFunctionStmt(stmt) {
     const fn = new InertzUserFunction(stmt, this.environment);
-    this.environment.define(stmt.name.lexeme, fn);
-    return null;
+    if (stmt.name !== null) {
+      this.environment.define(stmt.name.lexeme, fn);
+    }
+    return fn;
   }
 
   visitReturnStmt(stmt) {
