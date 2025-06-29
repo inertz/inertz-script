@@ -222,6 +222,108 @@ class Interpreter {
     return expr.value;
   }
 
+  visitArrayExpr(expr) {
+    const elements = [];
+    for (const element of expr.elements) {
+      elements.push(this.evaluate(element));
+    }
+    return elements;
+  }
+
+  visitObjectExpr(expr) {
+    const object = {};
+    for (const property of expr.properties) {
+      const value = this.evaluate(property.value);
+      object[property.key] = value;
+    }
+    return object;
+  }
+
+  visitGetExpr(expr) {
+    const object = this.evaluate(expr.object);
+    
+    if (object === null || object === undefined) {
+      throw new Error(`Cannot access property '${expr.name.lexeme}' of null or undefined`);
+    }
+
+    if (typeof object === 'object') {
+      return object[expr.name.lexeme];
+    }
+
+    throw new Error(`Cannot access property '${expr.name.lexeme}' of ${typeof object}`);
+  }
+
+  visitSetExpr(expr) {
+    const object = this.evaluate(expr.object);
+    
+    if (object === null || object === undefined) {
+      throw new Error(`Cannot set property '${expr.name.lexeme}' on null or undefined`);
+    }
+
+    if (typeof object !== 'object') {
+      throw new Error(`Cannot set property '${expr.name.lexeme}' on ${typeof object}`);
+    }
+
+    const value = this.evaluate(expr.value);
+    object[expr.name.lexeme] = value;
+    return value;
+  }
+
+  visitIndexExpr(expr) {
+    const object = this.evaluate(expr.object);
+    const index = this.evaluate(expr.index);
+
+    if (Array.isArray(object)) {
+      if (typeof index !== 'number' || !Number.isInteger(index)) {
+        throw new Error('Array index must be an integer');
+      }
+      if (index < 0 || index >= object.length) {
+        return null; // Return null for out-of-bounds access
+      }
+      return object[index];
+    }
+
+    if (typeof object === 'object' && object !== null) {
+      return object[index];
+    }
+
+    if (typeof object === 'string') {
+      if (typeof index !== 'number' || !Number.isInteger(index)) {
+        throw new Error('String index must be an integer');
+      }
+      if (index < 0 || index >= object.length) {
+        return null;
+      }
+      return object[index];
+    }
+
+    throw new Error(`Cannot index ${typeof object} with ${typeof index}`);
+  }
+
+  visitIndexSetExpr(expr) {
+    const object = this.evaluate(expr.object);
+    const index = this.evaluate(expr.index);
+    const value = this.evaluate(expr.value);
+
+    if (Array.isArray(object)) {
+      if (typeof index !== 'number' || !Number.isInteger(index)) {
+        throw new Error('Array index must be an integer');
+      }
+      if (index < 0) {
+        throw new Error('Array index cannot be negative');
+      }
+      object[index] = value;
+      return value;
+    }
+
+    if (typeof object === 'object' && object !== null) {
+      object[index] = value;
+      return value;
+    }
+
+    throw new Error(`Cannot set index on ${typeof object}`);
+  }
+
   visitVariableExpr(expr) {
     return this.environment.get(expr.name);
   }
@@ -280,6 +382,16 @@ class Interpreter {
         text = text.substring(0, text.length - 2);
       }
       return text;
+    }
+    if (Array.isArray(object)) {
+      return '[' + object.map(item => this.stringify(item)).join(', ') + ']';
+    }
+    if (typeof object === 'object') {
+      const pairs = [];
+      for (const [key, value] of Object.entries(object)) {
+        pairs.push(`${key}: ${this.stringify(value)}`);
+      }
+      return '{' + pairs.join(', ') + '}';
     }
     return object.toString();
   }

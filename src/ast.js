@@ -56,6 +56,78 @@ class LiteralExpr extends ASTNode {
   }
 }
 
+class ArrayExpr extends ASTNode {
+  constructor(elements) {
+    super();
+    this.elements = elements;
+  }
+
+  accept(visitor) {
+    return visitor.visitArrayExpr(this);
+  }
+}
+
+class ObjectExpr extends ASTNode {
+  constructor(properties) {
+    super();
+    this.properties = properties; // Array of {key, value} pairs
+  }
+
+  accept(visitor) {
+    return visitor.visitObjectExpr(this);
+  }
+}
+
+class GetExpr extends ASTNode {
+  constructor(object, name) {
+    super();
+    this.object = object;
+    this.name = name;
+  }
+
+  accept(visitor) {
+    return visitor.visitGetExpr(this);
+  }
+}
+
+class SetExpr extends ASTNode {
+  constructor(object, name, value) {
+    super();
+    this.object = object;
+    this.name = name;
+    this.value = value;
+  }
+
+  accept(visitor) {
+    return visitor.visitSetExpr(this);
+  }
+}
+
+class IndexExpr extends ASTNode {
+  constructor(object, index) {
+    super();
+    this.object = object;
+    this.index = index;
+  }
+
+  accept(visitor) {
+    return visitor.visitIndexExpr(this);
+  }
+}
+
+class IndexSetExpr extends ASTNode {
+  constructor(object, index, value) {
+    super();
+    this.object = object;
+    this.index = index;
+    this.value = value;
+  }
+
+  accept(visitor) {
+    return visitor.visitIndexSetExpr(this);
+  }
+}
+
 class VariableExpr extends ASTNode {
   constructor(name) {
     super();
@@ -183,6 +255,12 @@ module.exports = {
   UnaryExpr,
   TernaryExpr,
   LiteralExpr,
+  ArrayExpr,
+  ObjectExpr,
+  GetExpr,
+  SetExpr,
+  IndexExpr,
+  IndexSetExpr,
   VariableExpr,
   AssignExpr,
   CallExpr,

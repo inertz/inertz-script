@@ -1,0 +1,123 @@
+// Arrays and Objects demonstration in Inertz Script
+
+print("=== Arrays ===");
+
+// Array creation
+var numbers = [1, 2, 3, 4, 5];
+var mixed = [1, "hello", true, null];
+var empty = [];
+
+print("Numbers array:", numbers);
+print("Mixed array:", mixed);
+print("Empty array:", empty);
+
+// Array access
+print("First number:", numbers[0]);
+print("Last number:", numbers[4]);
+print("Mixed second element:", mixed[1]);
+
+// Array modification
+numbers[0] = 10;
+print("After modifying first element:", numbers);
+
+// Array methods
+print("Length of numbers:", len(numbers));
+var newLength = push(numbers, 6);
+print("After push(6):", numbers, "New length:", newLength);
+
+var popped = pop(numbers);
+print("Popped element:", popped);
+print("After pop:", numbers);
+
+print("\n=== Objects ===");
+
+// Object creation
+var person = {
+    name: "Alice",
+    age: 30,
+    city: "New York"
+};
+
+var empty_obj = {};
+
+print("Person object:", person);
+print("Empty object:", empty_obj);
+
+// Object property access
+print("Person name:", person.name);
+print("Person age:", person.age);
+print("Person city:", person.city);
+
+// Object property modification
+person.age = 31;
+person.country = "USA";
+print("After modification:", person);
+
+// Object methods
+print("Object keys:", keys(person));
+print("Object values:", values(person));
+print("Object length:", len(person));
+
+print("\n=== Nested Structures ===");
+
+// Nested arrays and objects
+var data = {
+    users: [
+        {name: "Alice", age: 30},
+        {name: "Bob", age: 25}
+    ],
+    settings: {
+        theme: "dark",
+        notifications: true
+    }
+};
+
+print("Nested data:", data);
+print("First user:", data.users[0]);
+print("First user name:", data.users[0].name);
+print("Theme setting:", data.settings.theme);
+
+// Modify nested data
+data.users[0].age = 31;
+data.settings.notifications = false;
+print("After nested modifications:", data);
+
+print("\n=== Array of Objects ===");
+
+var students = [
+    {name: "John", grade: 85},
+    {name: "Jane", grade: 92},
+    {name: "Bob", grade: 78}
+];
+
+print("Students:", students);
+
+// Calculate average grade
+var total = 0;
+var i = 0;
+while (i < len(students)) {
+    total = total + students[i].grade;
+    i = i + 1;
+}
+var average = total / len(students);
+print("Average grade:", average);
+
+print("\n=== Dynamic Object Creation ===");
+
+function createPerson(name, age) {
+    return {
+        name: name,
+        age: age,
+        greet: function() {
+            return "Hello, I'm " + name;
+        }
+    };
+}
+
+var alice = createPerson("Alice", 25);
+var bob = createPerson("Bob", 30);
+
+print("Alice:", alice);
+print("Bob:", bob);
+
+print("\nDemo completed!");

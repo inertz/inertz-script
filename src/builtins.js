@@ -46,7 +46,10 @@ const builtins = {
     if (Array.isArray(arg)) {
       return arg.length;
     }
-    throw new Error('len() can only be called on strings and arrays');
+    if (typeof arg === 'object' && arg !== null) {
+      return Object.keys(arg).length;
+    }
+    throw new Error('len() can only be called on strings, arrays, and objects');
   }),
 
   typeof: new InertzFunction('typeof', 1, (interpreter, args) => {
@@ -61,6 +64,40 @@ const builtins = {
     if (typeof arg === 'object') return 'object';
     if (typeof arg === 'function' || arg instanceof InertzCallable) return 'function';
     return 'unknown';
+  }),
+
+  push: new InertzFunction('push', 2, (interpreter, args) => {
+    const array = args[0];
+    const value = args[1];
+    if (!Array.isArray(array)) {
+      throw new Error('push() can only be called on arrays');
+    }
+    array.push(value);
+    return array.length;
+  }),
+
+  pop: new InertzFunction('pop', 1, (interpreter, args) => {
+    const array = args[0];
+    if (!Array.isArray(array)) {
+      throw new Error('pop() can only be called on arrays');
+    }
+    return array.pop();
+  }),
+
+  keys: new InertzFunction('keys', 1, (interpreter, args) => {
+    const obj = args[0];
+    if (typeof obj !== 'object' || obj === null) {
+      throw new Error('keys() can only be called on objects');
+    }
+    return Object.keys(obj);
+  }),
+
+  values: new InertzFunction('values', 1, (interpreter, args) => {
+    const obj = args[0];
+    if (typeof obj !== 'object' || obj === null) {
+      throw new Error('values() can only be called on objects');
+    }
+    return Object.values(obj);
   }),
 
   input: new InertzFunction('input', 0, (interpreter, args) => {

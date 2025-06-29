@@ -1,6 +1,7 @@
 const { TokenType } = require('./token');
 const {
-  BinaryExpr, UnaryExpr, TernaryExpr, LiteralExpr, VariableExpr, AssignExpr, CallExpr,
+  BinaryExpr, UnaryExpr, TernaryExpr, LiteralExpr, ArrayExpr, ObjectExpr,
+  GetExpr, SetExpr, IndexExpr, IndexSetExpr, VariableExpr, AssignExpr, CallExpr,
   ExpressionStmt, VarStmt, BlockStmt, IfStmt, WhileStmt, FunctionStmt, ReturnStmt
 } = require('./ast');
 
@@ -142,6 +143,10 @@ class Parser {
       if (expr instanceof VariableExpr) {
         const name = expr.name;
         return new AssignExpr(name, value);
+      } else if (expr instanceof GetExpr) {
+        return new SetExpr(expr.object, expr.name, value);
+      } else if (expr instanceof IndexExpr) {
+        return new IndexSetExpr(expr.object, expr.index, value);
       }
 
       this.error(equals, "Invalid assignment target.");
@@ -251,6 +256,13 @@ class Parser {
     while (true) {
       if (this.match(TokenType.LEFT_PAREN)) {
         expr = this.finishCall(expr);
+      } else if (this.match(TokenType.DOT)) {
+        const name = this.consume(TokenType.IDENTIFIER, "Expected property name after '.'.");
+        expr = new GetExpr(expr, name);
+      } else if (this.match(TokenType.LEFT_BRACKET)) {
+        const index = this.expression();
+        this.consume(TokenType.RIGHT_BRACKET, "Expected ']' after array index.");
+        expr = new IndexExpr(expr, index);
       } else {
         break;
       }
@@ -293,7 +305,52 @@ class Parser {
       return expr;
     }
 
+    if (this.match(TokenType.LEFT_BRACKET)) {
+      return this.arrayLiteral();
+    }
+
+    if (this.match(TokenType.LEFT_BRACE)) {
+      return this.objectLiteral();
+    }
+
     throw this.error(this.peek(), "Expected expression.");
+  }
+
+  arrayLiteral() {
+    const elements = [];
+    
+    if (!this.check(TokenType.RIGHT_BRACKET)) {
+      do {
+        elements.push(this.expression());
+      } while (this.match(TokenType.COMMA));
+    }
+
+    this.consume(TokenType.RIGHT_BRACKET, "Expected ']' after array elements.");
+    return new ArrayExpr(elements);
+  }
+
+  objectLiteral() {
+    const properties = [];
+
+    if (!this.check(TokenType.RIGHT_BRACE)) {
+      do {
+        let key;
+        if (this.check(TokenType.IDENTIFIER)) {
+          key = this.advance().lexeme;
+        } else if (this.check(TokenType.STRING)) {
+          key = this.advance().literal;
+        } else {
+          throw this.error(this.peek(), "Expected property name.");
+        }
+
+        this.consume(TokenType.COLON, "Expected ':' after property name.");
+        const value = this.expression();
+        properties.push({ key, value });
+      } while (this.match(TokenType.COMMA));
+    }
+
+    this.consume(TokenType.RIGHT_BRACE, "Expected '}' after object properties.");
+    return new ObjectExpr(properties);
   }
 
   match(...types) {
