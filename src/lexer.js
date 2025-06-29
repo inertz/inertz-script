@@ -16,6 +16,7 @@ class Lexer {
       'else': TokenType.ELSE,
       'while': TokenType.WHILE,
       'for': TokenType.FOR,
+      'in': TokenType.IN,
       'return': TokenType.RETURN,
       'true': TokenType.TRUE,
       'false': TokenType.FALSE,

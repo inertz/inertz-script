@@ -127,6 +127,81 @@ class Interpreter {
     return null;
   }
 
+  visitForStmt(stmt) {
+    // Create new environment for the for loop
+    const environment = new Environment(this.environment);
+    const previous = this.environment;
+    
+    try {
+      this.environment = environment;
+
+      // Execute initializer
+      if (stmt.initializer !== null) {
+        this.execute(stmt.initializer);
+      }
+
+      // Loop
+      while (true) {
+        // Check condition
+        if (stmt.condition !== null) {
+          if (!this.isTruthy(this.evaluate(stmt.condition))) {
+            break;
+          }
+        }
+
+        // Execute body
+        this.execute(stmt.body);
+
+        // Execute increment
+        if (stmt.increment !== null) {
+          this.evaluate(stmt.increment);
+        }
+      }
+    } finally {
+      this.environment = previous;
+    }
+
+    return null;
+  }
+
+  visitForInStmt(stmt) {
+    const iterable = this.evaluate(stmt.iterable);
+    
+    // Create new environment for the for-in loop
+    const environment = new Environment(this.environment);
+    const previous = this.environment;
+    
+    try {
+      this.environment = environment;
+
+      if (Array.isArray(iterable)) {
+        // Iterate over array indices
+        for (let i = 0; i < iterable.length; i++) {
+          this.environment.define(stmt.variable.lexeme, i);
+          this.execute(stmt.body);
+        }
+      } else if (typeof iterable === 'object' && iterable !== null) {
+        // Iterate over object keys
+        for (const key of Object.keys(iterable)) {
+          this.environment.define(stmt.variable.lexeme, key);
+          this.execute(stmt.body);
+        }
+      } else if (typeof iterable === 'string') {
+        // Iterate over string indices
+        for (let i = 0; i < iterable.length; i++) {
+          this.environment.define(stmt.variable.lexeme, i);
+          this.execute(stmt.body);
+        }
+      } else {
+        throw new Error(`Cannot iterate over ${typeof iterable}`);
+      }
+    } finally {
+      this.environment = previous;
+    }
+
+    return null;
+  }
+
   visitFunctionStmt(stmt) {
     const fn = new InertzUserFunction(stmt, this.environment);
     if (stmt.name !== null) {

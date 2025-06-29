@@ -14,6 +14,7 @@ class TokenType {
   static ELSE = 'ELSE';
   static WHILE = 'WHILE';
   static FOR = 'FOR';
+  static IN = 'IN';
   static RETURN = 'RETURN';
   static TRUE = 'TRUE';
   static FALSE = 'FALSE';

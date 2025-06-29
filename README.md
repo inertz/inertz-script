@@ -15,7 +15,8 @@ A JavaScript-inspired interpreted programming language with C++-like structure, 
 ### Language Constructs
 - **Variables**: `var name = value;`
 - **Functions**: `function name(params) { ... }`
-- **Control Flow**: `if/else`, `while` loops
+- **Control Flow**: `if/else`, `while` loops, `for` loops
+- **For-In Loops**: `for (var key in object)` and `for (var index in array)`
 - **Operators**: Arithmetic (`+`, `-`, `*`, `/`, `%`), Comparison (`==`, `!=`, `>`, `<`, `>=`, `<=`), Logical (`&&`, `||`, `!`)
 - **Ternary**: `condition ? true_value : false_value`
 - **Array Access**: `array[index]`
@@ -50,6 +51,9 @@ npm run example
 # Run arrays and objects example
 node src/main.js examples/arrays-objects.bn
 
+# Run for loops example
+node src/main.js examples/for-loops.bn
+
 # Run specific file
 node src/main.js path/to/your/file.bn
 ```
@@ -61,11 +65,10 @@ npm run repl
 
 # In REPL, type Inertz Script code:
 inertz> var x = [1, 2, 3];
-inertz> print(x[0]);
-1
-inertz> var obj = {name: "Alice"};
-inertz> print(obj.name);
-Alice
+inertz> for (var i in x) { print(i, x[i]); }
+0 1
+1 2
+2 3
 inertz> exit
 ```
 
@@ -79,53 +82,89 @@ npm test
 ```inertz
 // Variables and basic operations
 var name = "Alice";
-var age = 25;
 var numbers = [1, 2, 3, 4, 5];
 
-// Arrays
-print("First number:", numbers[0]);
-push(numbers, 6);
-print("Updated array:", numbers);
+// Traditional for loop
+for (var i = 0; i < len(numbers); i = i + 1) {
+    print("Number at index", i, ":", numbers[i]);
+}
 
-// Objects
+// For-in loop with arrays (iterates over indices)
+for (var index in numbers) {
+    print("Index", index, "value:", numbers[index]);
+}
+
+// Objects and for-in loops
 var person = {
     name: "Alice",
     age: 30,
     city: "New York"
 };
 
-print("Person name:", person.name);
-person.age = 31;
-print("Updated person:", person);
-
-// Nested structures
-var data = {
-    users: [
-        {name: "Alice", age: 30},
-        {name: "Bob", age: 25}
-    ]
-};
-
-print("First user:", data.users[0].name);
-
-// Control flow with arrays
-var i = 0;
-while (i < len(numbers)) {
-    print("Number at index", i, ":", numbers[i]);
-    i = i + 1;
+// For-in loop with objects (iterates over keys)
+for (var key in person) {
+    print(key + ":", person[key]);
 }
 
-// Functions with objects
-function createUser(name, age) {
-    return {
-        name: name,
-        age: age,
-        isAdult: age >= 18
-    };
+// Nested loops
+var matrix = [
+    [1, 2, 3],
+    [4, 5, 6],
+    [7, 8, 9]
+];
+
+for (var row = 0; row < len(matrix); row = row + 1) {
+    for (var col = 0; col < len(matrix[row]); col = col + 1) {
+        print("matrix[" + row + "][" + col + "] =", matrix[row][col]);
+    }
 }
 
-var user = createUser("Charlie", 22);
-print("User:", user);
+// Functions with loops
+function findMax(arr) {
+    var max = arr[0];
+    for (var i = 1; i < len(arr); i = i + 1) {
+        if (arr[i] > max) {
+            max = arr[i];
+        }
+    }
+    return max;
+}
+
+var scores = [85, 92, 78, 96, 88];
+print("Maximum score:", findMax(scores));
+```
+
+## Loop Types
+
+### Traditional For Loop
+```inertz
+for (var i = 0; i < 10; i = i + 1) {
+    print(i);
+}
+```
+
+### For-In Loop with Arrays
+```inertz
+var fruits = ["apple", "banana", "orange"];
+for (var index in fruits) {
+    print("Index:", index, "Fruit:", fruits[index]);
+}
+```
+
+### For-In Loop with Objects
+```inertz
+var person = {name: "Alice", age: 30};
+for (var key in person) {
+    print(key + ":", person[key]);
+}
+```
+
+### For-In Loop with Strings
+```inertz
+var message = "Hello";
+for (var i in message) {
+    print("Character at", i, ":", message[i]);
+}
 ```
 
 ## Project Structure
@@ -147,7 +186,8 @@ inertz-script/
 │   ├── demo.bn         # Language showcase
 │   ├── fibonacci.bn    # Fibonacci sequence
 │   ├── calculator.bn   # Simple calculator
-│   └── arrays-objects.bn # Arrays and objects demo
+│   ├── arrays-objects.bn # Arrays and objects demo
+│   └── for-loops.bn    # For loops demonstration
 └── README.md
 ```
 
@@ -161,6 +201,7 @@ Inertz Script follows these design principles:
 4. **Extensible**: Easy to add new features and built-ins
 5. **Error Handling**: Comprehensive error reporting
 6. **Rich Data Types**: Support for arrays and objects with intuitive syntax
+7. **Flexible Iteration**: Multiple loop types for different use cases
 
 ## Technical Implementation
 
@@ -170,31 +211,29 @@ Inertz Script follows these design principles:
 - **Environment**: Lexical scoping with environment chains
 - **Built-ins**: Native function support with proper arity checking
 - **Data Structures**: Native JavaScript arrays and objects with Inertz Script syntax
+- **Loop Constructs**: Traditional for loops and for-in iteration
 
-## Arrays and Objects Features
+## For Loop Features
 
-### Arrays
-- **Creation**: `var arr = [1, 2, 3];`
-- **Access**: `arr[0]` (zero-indexed)
-- **Modification**: `arr[0] = 10;`
-- **Methods**: `push(arr, value)`, `pop(arr)`, `len(arr)`
-- **Mixed types**: `[1, "hello", true, null]`
+### Traditional For Loops
+- **Syntax**: `for (initializer; condition; increment) { body }`
+- **Use case**: When you need precise control over iteration
+- **Example**: Counting, array traversal with indices
 
-### Objects
-- **Creation**: `var obj = {key: value, name: "Alice"};`
-- **Property access**: `obj.name` or `obj["name"]`
-- **Property modification**: `obj.name = "Bob";`
-- **Dynamic properties**: `obj.newProp = "value";`
-- **Methods**: `keys(obj)`, `values(obj)`, `len(obj)`
+### For-In Loops
+- **Arrays**: Iterates over array indices (0, 1, 2, ...)
+- **Objects**: Iterates over object keys
+- **Strings**: Iterates over character indices
+- **Syntax**: `for (var variable in iterable) { body }`
 
-### Nested Structures
-- Arrays of objects: `[{name: "Alice"}, {name: "Bob"}]`
-- Objects with arrays: `{users: ["Alice", "Bob"]}`
-- Deep nesting: `data.users[0].profile.settings`
+### Scoping
+- Loop variables are properly scoped within the loop environment
+- Variables declared in loop initializers are accessible throughout the loop
+- Nested loops maintain separate scopes
 
 ## Future Enhancements
 
-- For loops with array iteration
+- Break and continue statements
 - Array methods (map, filter, reduce)
 - Object methods and prototypes
 - Import/export system

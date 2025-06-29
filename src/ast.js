@@ -224,6 +224,33 @@ class WhileStmt extends ASTNode {
   }
 }
 
+class ForStmt extends ASTNode {
+  constructor(initializer, condition, increment, body) {
+    super();
+    this.initializer = initializer;
+    this.condition = condition;
+    this.increment = increment;
+    this.body = body;
+  }
+
+  accept(visitor) {
+    return visitor.visitForStmt(this);
+  }
+}
+
+class ForInStmt extends ASTNode {
+  constructor(variable, iterable, body) {
+    super();
+    this.variable = variable;
+    this.iterable = iterable;
+    this.body = body;
+  }
+
+  accept(visitor) {
+    return visitor.visitForInStmt(this);
+  }
+}
+
 class FunctionStmt extends ASTNode {
   constructor(name, params, body) {
     super();
@@ -269,6 +296,8 @@ module.exports = {
   BlockStmt,
   IfStmt,
   WhileStmt,
+  ForStmt,
+  ForInStmt,
   FunctionStmt,
   ReturnStmt
 };

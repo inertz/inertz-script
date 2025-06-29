@@ -1,0 +1,143 @@
+// For loops demonstration in Inertz Script
+
+print("=== Traditional For Loops ===");
+
+// Basic for loop
+print("Counting from 0 to 4:");
+for (var i = 0; i < 5; i = i + 1) {
+    print("i =", i);
+}
+
+// For loop with array
+var numbers = [10, 20, 30, 40, 50];
+print("\nArray elements using traditional for loop:");
+for (var j = 0; j < len(numbers); j = j + 1) {
+    print("numbers[" + j + "] =", numbers[j]);
+}
+
+// Nested for loops
+print("\nMultiplication table (3x3):");
+for (var row = 1; row <= 3; row = row + 1) {
+    var line = "";
+    for (var col = 1; col <= 3; col = col + 1) {
+        line = line + (row * col) + " ";
+    }
+    print(line);
+}
+
+print("\n=== For-In Loops ===");
+
+// For-in with arrays (iterates over indices)
+var fruits = ["apple", "banana", "orange", "grape"];
+print("Array indices using for-in:");
+for (var index in fruits) {
+    print("Index", index, ":", fruits[index]);
+}
+
+// For-in with objects (iterates over keys)
+var person = {
+    name: "Alice",
+    age: 30,
+    city: "New York",
+    country: "USA"
+};
+
+print("\nObject properties using for-in:");
+for (var key in person) {
+    print(key + ":", person[key]);
+}
+
+// For-in with strings (iterates over character indices)
+var message = "Hello";
+print("\nString character indices using for-in:");
+for (var i in message) {
+    print("Character at index", i, ":", message[i]);
+}
+
+print("\n=== Practical Examples ===");
+
+// Sum array elements
+var scores = [85, 92, 78, 96, 88];
+var total = 0;
+for (var i in scores) {
+    total = total + scores[i];
+}
+var average = total / len(scores);
+print("Scores:", scores);
+print("Total:", total);
+print("Average:", average);
+
+// Find maximum value
+var values = [23, 67, 12, 89, 45, 91, 34];
+var max = values[0];
+for (var i = 1; i < len(values); i = i + 1) {
+    if (values[i] > max) {
+        max = values[i];
+    }
+}
+print("Values:", values);
+print("Maximum value:", max);
+
+// Count object properties
+var inventory = {
+    apples: 50,
+    bananas: 30,
+    oranges: 25,
+    grapes: 40
+};
+
+var itemCount = 0;
+var totalItems = 0;
+for (var item in inventory) {
+    itemCount = itemCount + 1;
+    totalItems = totalItems + inventory[item];
+    print(item + ":", inventory[item]);
+}
+print("Total item types:", itemCount);
+print("Total items:", totalItems);
+
+print("\n=== Array of Objects ===");
+
+var students = [
+    {name: "John", grade: 85, subject: "Math"},
+    {name: "Jane", grade: 92, subject: "Science"},
+    {name: "Bob", grade: 78, subject: "History"},
+    {name: "Alice", grade: 96, subject: "English"}
+];
+
+print("Student grades:");
+for (var i in students) {
+    var student = students[i];
+    print(student.name + " (" + student.subject + "):", student.grade);
+}
+
+// Find student with highest grade
+var topStudent = students[0];
+for (var i = 1; i < len(students); i = i + 1) {
+    if (students[i].grade > topStudent.grade) {
+        topStudent = students[i];
+    }
+}
+print("Top student:", topStudent.name, "with grade", topStudent.grade);
+
+print("\n=== Nested Data Structures ===");
+
+var company = {
+    name: "Tech Corp",
+    departments: {
+        engineering: ["Alice", "Bob", "Charlie"],
+        marketing: ["David", "Eve"],
+        sales: ["Frank", "Grace", "Henry"]
+    }
+};
+
+print("Company:", company.name);
+for (var dept in company.departments) {
+    print("Department:", dept);
+    var employees = company.departments[dept];
+    for (var i in employees) {
+        print("  Employee " + (i + 1) + ":", employees[i]);
+    }
+}
+
+print("\nFor loops demonstration completed!");
