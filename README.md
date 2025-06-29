@@ -15,9 +15,11 @@ A JavaScript-inspired interpreted programming language with C++-like structure, 
 ### Language Constructs
 - **Variables**: `var name = value;`
 - **Functions**: `function name(params) { ... }`
+- **Arrow Functions**: `x => x * 2`, `(a, b) => a + b`
 - **Control Flow**: `if/else`, `while` loops, `for` loops
 - **For-In Loops**: `for (var key in object)` and `for (var index in array)`
 - **Loop Control**: `break` and `continue` statements
+- **Exception Handling**: `try/catch/finally`, `throw`
 - **Operators**: Arithmetic (`+`, `-`, `*`, `/`, `%`), Comparison (`==`, `!=`, `>`, `<`, `>=`, `<=`), Logical (`&&`, `||`, `!`)
 - **Ternary**: `condition ? true_value : false_value`
 - **Array Access**: `array[index]`
@@ -41,10 +43,17 @@ A JavaScript-inspired interpreted programming language with C++-like structure, 
 - `find(array, function)` - Get first element that matches condition
 - `some(array, function)` - Check if any element matches condition
 - `every(array, function)` - Check if all elements match condition
+- `forEach(array, function)` - Execute function for each element
+- `indexOf(array, element)` - Find index of element (-1 if not found)
+- `includes(array, element)` - Check if array contains element
+- `slice(array, start, end)` - Extract portion of array
+- `splice(array, start, deleteCount, ...items)` - Modify array by removing/adding elements
 
 #### Object Functions
 - `keys(object)` - Get array of object keys
 - `values(object)` - Get array of object values
+- `hasOwnProperty(object, property)` - Check if object has property
+- `assign(target, ...sources)` - Copy properties from source objects to target
 
 #### Math Functions
 - `abs(number)` - Absolute value
@@ -77,6 +86,9 @@ node src/main.js examples/break-continue.is
 # Run array methods example
 node src/main.js examples/array-methods.is
 
+# Run advanced features example
+node src/main.js examples/advanced-features.is
+
 # Run specific file
 node src/main.js path/to/your/file.is
 ```
@@ -88,7 +100,7 @@ npm run repl
 
 # In REPL, type Inertz Script code:
 inertz> var numbers = [1, 2, 3, 4, 5];
-inertz> var doubled = map(numbers, function(x) { return x * 2; });
+inertz> var doubled = map(numbers, x => x * 2);
 inertz> print(doubled);
 [2, 4, 6, 8, 10]
 inertz> exit
@@ -99,148 +111,179 @@ inertz> exit
 npm test
 ```
 
-## Array Methods Examples
+## Exception Handling
 
-### Map - Transform Elements
+### Try/Catch/Finally
 ```inertz
+try {
+    // Risky code
+    throw "Something went wrong!";
+} catch (error) {
+    print("Caught error:", error);
+} finally {
+    print("This always executes");
+}
+```
+
+### Throwing Exceptions
+```inertz
+function safeDivide(a, b) {
+    if (b == 0) {
+        throw "Division by zero";
+    }
+    return a / b;
+}
+
+try {
+    var result = safeDivide(10, 0);
+} catch (error) {
+    print("Error:", error);
+}
+```
+
+## Arrow Functions
+
+### Basic Syntax
+```inertz
+// Single parameter
+var double = x => x * 2;
+
+// Multiple parameters
+var add = (a, b) => a + b;
+
+// With array methods
 var numbers = [1, 2, 3, 4, 5];
-
-// Double each number
-function double(x) {
-    return x * 2;
-}
-var doubled = map(numbers, double);
-print(doubled); // [2, 4, 6, 8, 10]
-
-// Using anonymous function
-var squared = map(numbers, function(x) {
-    return x * x;
-});
-print(squared); // [1, 4, 9, 16, 25]
+var doubled = map(numbers, x => x * 2);
+var evens = filter(numbers, x => x % 2 == 0);
+var sum = reduce(numbers, (acc, x) => acc + x, 0);
 ```
 
-### Filter - Select Elements
-```inertz
-var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-// Get even numbers
-function isEven(x) {
-    return x % 2 == 0;
-}
-var evens = filter(numbers, isEven);
-print(evens); // [2, 4, 6, 8, 10]
-
-// Get numbers greater than 5
-var bigNumbers = filter(numbers, function(x) {
-    return x > 5;
-});
-print(bigNumbers); // [6, 7, 8, 9, 10]
-```
-
-### Reduce - Combine Elements
-```inertz
-var numbers = [1, 2, 3, 4, 5];
-
-// Sum all numbers
-function add(acc, x) {
-    return acc + x;
-}
-var sum = reduce(numbers, add, 0);
-print(sum); // 15
-
-// Find maximum
-function max(acc, x) {
-    return x > acc ? x : acc;
-}
-var maximum = reduce(numbers, max, numbers[0]);
-print(maximum); // 5
-```
-
-### Chaining Methods
-```inertz
-var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
-// Get even numbers, square them, then sum
-function isEven(x) { return x % 2 == 0; }
-function square(x) { return x * x; }
-function add(acc, x) { return acc + x; }
-
-var result = reduce(
-    map(
-        filter(numbers, isEven),
-        square
-    ),
-    add,
-    0
-);
-print(result); // 220 (2² + 4² + 6² + 8² + 10²)
-```
-
-### Working with Objects
+### Complex Examples
 ```inertz
 var people = [
     {name: "Alice", age: 25, salary: 50000},
-    {name: "Bob", age: 30, salary: 60000},
-    {name: "Charlie", age: 35, salary: 70000}
+    {name: "Bob", age: 30, salary: 60000}
 ];
 
-// Extract names
-function getName(person) {
-    return person.name;
-}
-var names = map(people, getName);
-print(names); // ["Alice", "Bob", "Charlie"]
+// Chain operations with arrow functions
+var highEarnerNames = map(
+    filter(people, person => person.salary >= 60000),
+    person => person.name
+);
+```
 
-// Filter high earners
-function isHighEarner(person) {
-    return person.salary >= 60000;
-}
-var highEarners = filter(people, isHighEarner);
-print(highEarners); // [{name: "Bob", ...}, {name: "Charlie", ...}]
+## Array Methods Examples
 
-// Calculate total salary
-function addSalary(acc, person) {
-    return acc + person.salary;
-}
-var totalSalary = reduce(people, addSalary, 0);
-print(totalSalary); // 180000
+### Core Methods
+```inertz
+var numbers = [1, 2, 3, 4, 5];
+
+// Map - transform elements
+var doubled = map(numbers, x => x * 2);
+print(doubled); // [2, 4, 6, 8, 10]
+
+// Filter - select elements
+var evens = filter(numbers, x => x % 2 == 0);
+print(evens); // [2, 4]
+
+// Reduce - combine elements
+var sum = reduce(numbers, (acc, x) => acc + x, 0);
+print(sum); // 15
+```
+
+### Additional Methods
+```inertz
+var fruits = ["apple", "banana", "orange"];
+
+// forEach - execute for each element
+forEach(fruits, fruit => print("Fruit:", fruit));
+
+// indexOf - find element index
+var index = indexOf(fruits, "banana"); // 1
+
+// includes - check if contains element
+var hasApple = includes(fruits, "apple"); // true
+
+// slice - extract portion
+var sliced = slice(fruits, 1, 3); // ["banana", "orange"]
+
+// splice - modify array
+var removed = splice(fruits, 1, 1, "grape"); // removes "banana", adds "grape"
+```
+
+## Object Methods and Prototypes
+
+### Object Manipulation
+```inertz
+var person = {name: "Alice", age: 30};
+
+// Check property existence
+var hasName = hasOwnProperty(person, "name"); // true
+
+// Copy properties
+var target = {a: 1};
+var source = {b: 2, c: 3};
+assign(target, source); // target becomes {a: 1, b: 2, c: 3}
+```
+
+### Object Creation Patterns
+```inertz
+// Factory function with arrow functions
+var createUser = (name, age) => ({
+    name: name,
+    age: age,
+    isAdult: age >= 18,
+    greet: () => "Hello, I'm " + name
+});
+
+var users = [
+    createUser("Alice", 25),
+    createUser("Bob", 17)
+];
+
+var adults = filter(users, user => user.isAdult);
 ```
 
 ## Example Code
 
 ```inertz
-// Variables and basic operations
-var name = "Alice";
-var numbers = [1, 2, 3, 4, 5];
-
-// Traditional for loop with break
-for (var i = 0; i < len(numbers); i = i + 1) {
-    if (numbers[i] == 3) {
-        print("Found 3, breaking!");
-        break;
-    }
-    print("Number:", numbers[i]);
+// Exception handling with arrow functions
+try {
+    var numbers = [1, 2, 3, 4, 5];
+    
+    // Process with arrow functions
+    var result = reduce(
+        map(
+            filter(numbers, x => x % 2 == 0),
+            x => {
+                if (x > 10) throw "Number too large";
+                return x * x;
+            }
+        ),
+        (acc, x) => acc + x,
+        0
+    );
+    
+    print("Result:", result);
+} catch (error) {
+    print("Processing error:", error);
+} finally {
+    print("Processing completed");
 }
 
-// For-in loop with continue
-for (var index in numbers) {
-    if (numbers[index] % 2 == 0) {
-        continue; // Skip even numbers
-    }
-    print("Odd number:", numbers[index]);
-}
+// Advanced array manipulation
+var data = [
+    {name: "Alice", scores: [85, 92, 78]},
+    {name: "Bob", scores: [76, 88, 94]}
+];
 
-// Array methods - functional programming style
-function isEven(x) { return x % 2 == 0; }
-function double(x) { return x * 2; }
-function add(acc, x) { return acc + x; }
+var averages = map(data, student => ({
+    name: student.name,
+    average: reduce(student.scores, (sum, score) => sum + score, 0) / len(student.scores)
+}));
 
-var evenDoubledSum = reduce(
-    map(filter(numbers, isEven), double),
-    add,
-    0
-);
-print("Sum of doubled even numbers:", evenDoubledSum);
+var topStudents = filter(averages, student => student.average >= 85);
+print("Top students:", topStudents);
 ```
 
 ## Loop Control Statements
@@ -249,71 +292,11 @@ print("Sum of doubled even numbers:", evenDoubledSum);
 - **Purpose**: Immediately exit the current loop
 - **Usage**: `break;`
 - **Works with**: `while`, `for`, and `for-in` loops
-- **Behavior**: Exits only the innermost loop containing the break statement
-
-```inertz
-for (var i = 0; i < 10; i = i + 1) {
-    if (i == 5) {
-        break; // Exit loop when i equals 5
-    }
-    print(i); // Prints 0, 1, 2, 3, 4
-}
-```
 
 ### Continue Statement
 - **Purpose**: Skip the rest of the current iteration and continue with the next
 - **Usage**: `continue;`
 - **Works with**: `while`, `for`, and `for-in` loops
-- **Behavior**: Jumps to the next iteration of the innermost loop
-
-```inertz
-for (var i = 0; i < 5; i = i + 1) {
-    if (i == 2) {
-        continue; // Skip when i equals 2
-    }
-    print(i); // Prints 0, 1, 3, 4
-}
-```
-
-## Loop Types
-
-### Traditional For Loop
-```inertz
-for (var i = 0; i < 10; i = i + 1) {
-    if (i == 5) break;
-    if (i % 2 == 0) continue;
-    print(i);
-}
-```
-
-### For-In Loop with Arrays
-```inertz
-var fruits = ["apple", "banana", "orange"];
-for (var index in fruits) {
-    if (fruits[index] == "banana") continue;
-    print("Index:", index, "Fruit:", fruits[index]);
-}
-```
-
-### For-In Loop with Objects
-```inertz
-var person = {name: "Alice", age: 30, city: "New York"};
-for (var key in person) {
-    if (key == "age") continue;
-    print(key + ":", person[key]);
-}
-```
-
-### While Loop
-```inertz
-var i = 0;
-while (i < 10) {
-    i = i + 1;
-    if (i % 2 == 0) continue;
-    if (i > 7) break;
-    print(i);
-}
-```
 
 ## Project Structure
 
@@ -337,7 +320,8 @@ inertz-script/
 │   ├── arrays-objects.is # Arrays and objects demo
 │   ├── for-loops.is    # For loops demonstration
 │   ├── break-continue.is # Break and continue examples
-│   └── array-methods.is # Array methods demonstration
+│   ├── array-methods.is # Array methods demonstration
+│   └── advanced-features.is # Exception handling, arrow functions, etc.
 └── README.md
 ```
 
@@ -349,54 +333,59 @@ Inertz Script follows these design principles:
 2. **Strong Foundation**: Proper lexer, parser, and AST-based interpreter
 3. **Modular Architecture**: Clean separation of concerns
 4. **Extensible**: Easy to add new features and built-ins
-5. **Error Handling**: Comprehensive error reporting
+5. **Error Handling**: Comprehensive error reporting with try/catch/finally
 6. **Rich Data Types**: Support for arrays and objects with intuitive syntax
 7. **Flexible Iteration**: Multiple loop types for different use cases
 8. **Structured Control Flow**: Break and continue for precise loop control
-9. **Functional Programming**: Array methods for elegant data transformation
+9. **Functional Programming**: Array methods and arrow functions for elegant data transformation
+10. **Exception Safety**: Proper exception handling with custom error types
 
 ## Technical Implementation
 
-- **Lexical Analysis**: Converts source code into tokens
+- **Lexical Analysis**: Converts source code into tokens (including arrow function operator)
 - **Parsing**: Builds Abstract Syntax Tree (AST) using recursive descent parser
 - **Interpretation**: Tree-walking interpreter with proper scoping
 - **Environment**: Lexical scoping with environment chains
 - **Built-ins**: Native function support with proper arity checking
 - **Data Structures**: Native JavaScript arrays and objects with Inertz Script syntax
 - **Loop Constructs**: Traditional for loops and for-in iteration
-- **Exception Handling**: Break and continue implemented as controlled exceptions
-- **Array Methods**: Functional programming support with map, filter, reduce, and more
+- **Exception Handling**: Try/catch/finally with custom exception types
+- **Arrow Functions**: Concise function syntax with lexical scoping
+- **Array Methods**: Comprehensive functional programming support
 
-## Array Methods Features
+## Advanced Features
 
-### Functional Programming Support
-- Higher-order functions that accept callback functions
-- Immutable operations (original arrays are not modified by map/filter)
-- Chainable operations for complex data transformations
-- Support for both named functions and anonymous function expressions
+### Exception Handling
+- **Try/Catch/Finally**: Full exception handling support
+- **Custom Exceptions**: Throw custom error messages
+- **Nested Exception Handling**: Try/catch blocks can be nested
+- **Finally Blocks**: Code that always executes regardless of exceptions
 
-### Method Signatures
-- `map(array, callback)` - callback receives (element, index, array)
-- `filter(array, callback)` - callback receives (element, index, array)
-- `reduce(array, callback, initialValue)` - callback receives (accumulator, element, index, array)
-- `find(array, callback)` - returns first matching element or null
-- `some(array, callback)` - returns true if any element matches
-- `every(array, callback)` - returns true if all elements match
+### Arrow Functions
+- **Concise Syntax**: `x => x * 2` for single parameters, `(a, b) => a + b` for multiple
+- **Lexical Scoping**: Arrow functions capture variables from enclosing scope
+- **Functional Programming**: Perfect for use with array methods
+- **Expression Bodies**: Arrow functions return the expression result automatically
 
-### Error Handling
-- Type checking ensures methods are called on arrays
-- Callback validation ensures functions are provided
-- Proper error messages guide developers to correct usage
-- Reduce handles empty arrays appropriately
+### Enhanced Array Methods
+- **forEach**: Execute function for each element without returning new array
+- **indexOf**: Find the index of an element in the array
+- **includes**: Check if array contains a specific element
+- **slice**: Extract a portion of array without modifying original
+- **splice**: Modify array by removing/adding elements at specific positions
+
+### Object Methods
+- **hasOwnProperty**: Check if object has a specific property
+- **assign**: Copy properties from source objects to target object
+- **Enhanced Object Manipulation**: Better support for object-oriented patterns
 
 ## Future Enhancements
 
-- Labeled break and continue statements
-- More array methods (forEach, indexOf, includes, slice, splice)
-- Object methods and prototypes
-- Import/export system
-- Standard library modules
+- Classes and inheritance
+- Modules and import/export system
+- Async/await support
+- Standard library expansion
 - Bytecode compilation
 - Debugging support
-- Exception handling (try/catch/finally)
-- Arrow functions for more concise callbacks
+- More built-in data structures (Set, Map)
+- Regular expressions

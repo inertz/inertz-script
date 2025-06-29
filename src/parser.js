@@ -2,8 +2,9 @@ const { TokenType } = require('./token');
 const {
   BinaryExpr, UnaryExpr, TernaryExpr, LiteralExpr, ArrayExpr, ObjectExpr,
   GetExpr, SetExpr, IndexExpr, IndexSetExpr, VariableExpr, AssignExpr, CallExpr,
-  ExpressionStmt, VarStmt, BlockStmt, IfStmt, WhileStmt, ForStmt, ForInStmt, 
-  FunctionStmt, ReturnStmt, BreakStmt, ContinueStmt
+  ArrowFunctionExpr, ExpressionStmt, VarStmt, BlockStmt, IfStmt, WhileStmt, 
+  ForStmt, ForInStmt, FunctionStmt, ReturnStmt, BreakStmt, ContinueStmt,
+  TryStmt, CatchClause, ThrowStmt
 } = require('./ast');
 
 class ParseError extends Error {
@@ -89,6 +90,8 @@ class Parser {
     if (this.match(TokenType.RETURN)) return this.returnStatement();
     if (this.match(TokenType.BREAK)) return this.breakStatement();
     if (this.match(TokenType.CONTINUE)) return this.continueStatement();
+    if (this.match(TokenType.TRY)) return this.tryStatement();
+    if (this.match(TokenType.THROW)) return this.throwStatement();
     if (this.match(TokenType.LEFT_BRACE)) return new BlockStmt(this.block());
 
     return this.expressionStatement();
@@ -178,6 +181,40 @@ class Parser {
     const body = this.statement();
 
     return new ForStmt(initializer, condition, increment, body);
+  }
+
+  tryStatement() {
+    this.consume(TokenType.LEFT_BRACE, "Expected '{' after 'try'.");
+    const tryBlock = this.block();
+
+    let catchClause = null;
+    if (this.match(TokenType.CATCH)) {
+      this.consume(TokenType.LEFT_PAREN, "Expected '(' after 'catch'.");
+      const param = this.consume(TokenType.IDENTIFIER, "Expected catch parameter name.");
+      this.consume(TokenType.RIGHT_PAREN, "Expected ')' after catch parameter.");
+      this.consume(TokenType.LEFT_BRACE, "Expected '{' before catch body.");
+      const catchBody = this.block();
+      catchClause = new CatchClause(param, catchBody);
+    }
+
+    let finallyBlock = null;
+    if (this.match(TokenType.FINALLY)) {
+      this.consume(TokenType.LEFT_BRACE, "Expected '{' after 'finally'.");
+      finallyBlock = this.block();
+    }
+
+    if (catchClause === null && finallyBlock === null) {
+      throw this.error(this.previous(), "Missing catch or finally after try.");
+    }
+
+    return new TryStmt(tryBlock, catchClause, finallyBlock);
+  }
+
+  throwStatement() {
+    const keyword = this.previous();
+    const value = this.expression();
+    this.consume(TokenType.SEMICOLON, "Expected ';' after throw value.");
+    return new ThrowStmt(keyword, value);
   }
 
   returnStatement() {
@@ -387,7 +424,15 @@ class Parser {
     }
 
     if (this.match(TokenType.IDENTIFIER)) {
-      return new VariableExpr(this.previous());
+      const identifier = this.previous();
+      
+      // Check for arrow function: identifier => expression
+      if (this.match(TokenType.ARROW)) {
+        const body = this.assignment();
+        return new ArrowFunctionExpr([identifier], body);
+      }
+      
+      return new VariableExpr(identifier);
     }
 
     if (this.match(TokenType.FUNCTION)) {
@@ -395,6 +440,22 @@ class Parser {
     }
 
     if (this.match(TokenType.LEFT_PAREN)) {
+      const checkpoint = this.current;
+      
+      try {
+        // Try to parse as arrow function parameters
+        const params = this.parseArrowParams();
+        if (this.match(TokenType.ARROW)) {
+          const body = this.assignment();
+          return new ArrowFunctionExpr(params, body);
+        }
+      } catch (e) {
+        // Not arrow function parameters, backtrack
+        this.current = checkpoint;
+      }
+      
+      // Parse as grouped expression
+      this.advance(); // consume '('
       const expr = this.expression();
       this.consume(TokenType.RIGHT_PAREN, "Expected ')' after expression.");
       return expr;
@@ -409,6 +470,19 @@ class Parser {
     }
 
     throw this.error(this.peek(), "Expected expression.");
+  }
+
+  parseArrowParams() {
+    const params = [];
+    
+    if (!this.check(TokenType.RIGHT_PAREN)) {
+      do {
+        params.push(this.consume(TokenType.IDENTIFIER, "Expected parameter name."));
+      } while (this.match(TokenType.COMMA));
+    }
+    
+    this.consume(TokenType.RIGHT_PAREN, "Expected ')' after parameters.");
+    return params;
   }
 
   arrayLiteral() {
@@ -508,6 +582,8 @@ class Parser {
         case TokenType.RETURN:
         case TokenType.BREAK:
         case TokenType.CONTINUE:
+        case TokenType.TRY:
+        case TokenType.THROW:
           return;
       }
 

@@ -40,6 +40,39 @@ class InertzUserFunction extends InertzCallable {
   }
 }
 
+class InertzArrowFunction extends InertzCallable {
+  constructor(params, body, closure) {
+    super();
+    this.params = params;
+    this.body = body;
+    this.closure = closure;
+  }
+
+  arity() {
+    return this.params.length;
+  }
+
+  call(interpreter, args) {
+    const environment = new Environment(this.closure);
+
+    for (let i = 0; i < this.params.length; i++) {
+      environment.define(this.params[i].lexeme, args[i]);
+    }
+
+    const previous = interpreter.environment;
+    try {
+      interpreter.environment = environment;
+      return interpreter.evaluate(this.body);
+    } finally {
+      interpreter.environment = previous;
+    }
+  }
+
+  toString() {
+    return '<arrow fn>';
+  }
+}
+
 class ReturnException extends Error {
   constructor(value) {
     super();
@@ -56,6 +89,13 @@ class BreakException extends Error {
 class ContinueException extends Error {
   constructor() {
     super();
+  }
+}
+
+class InertzRuntimeError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'InertzRuntimeError';
   }
 }
 
@@ -326,6 +366,34 @@ class Interpreter {
     throw new ContinueException();
   }
 
+  visitTryStmt(stmt) {
+    try {
+      this.executeBlock(stmt.tryBlock, new Environment(this.environment));
+    } catch (error) {
+      if (stmt.catchClause !== null && error instanceof InertzRuntimeError) {
+        const catchEnv = new Environment(this.environment);
+        catchEnv.define(stmt.catchClause.param.lexeme, error.message);
+        this.executeBlock(stmt.catchClause.body, catchEnv);
+      } else if (stmt.catchClause !== null) {
+        const catchEnv = new Environment(this.environment);
+        catchEnv.define(stmt.catchClause.param.lexeme, error.message || error.toString());
+        this.executeBlock(stmt.catchClause.body, catchEnv);
+      } else {
+        throw error;
+      }
+    } finally {
+      if (stmt.finallyBlock !== null) {
+        this.executeBlock(stmt.finallyBlock, new Environment(this.environment));
+      }
+    }
+    return null;
+  }
+
+  visitThrowStmt(stmt) {
+    const value = this.evaluate(stmt.value);
+    throw new InertzRuntimeError(this.stringify(value));
+  }
+
   // Visit methods for expressions
   visitBinaryExpr(expr) {
     const left = this.evaluate(expr.left);
@@ -540,6 +608,10 @@ class Interpreter {
     return callee.call(this, args);
   }
 
+  visitArrowFunctionExpr(expr) {
+    return new InertzArrowFunction(expr.params, expr.body, this.environment);
+  }
+
   // Helper methods
   isTruthy(object) {
     if (object === null) return false;
@@ -584,4 +656,4 @@ class Interpreter {
   }
 }
 
-module.exports = { Interpreter, ReturnException, BreakException, ContinueException };
+module.exports = { Interpreter, ReturnException, BreakException, ContinueException, InertzRuntimeError };

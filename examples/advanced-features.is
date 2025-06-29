@@ -1,0 +1,246 @@
+// Advanced Features demonstration in Inertz Script
+
+print("=== Exception Handling (try/catch/finally) ===");
+
+// Basic try/catch
+try {
+    print("Executing risky code...");
+    throw "Something went wrong!";
+    print("This won't be printed");
+} catch (error) {
+    print("Caught error:", error);
+}
+
+// Try/catch/finally
+try {
+    print("Trying division...");
+    var result = 10 / 0; // This will work in Inertz Script
+    print("Result:", result);
+} catch (error) {
+    print("Error occurred:", error);
+} finally {
+    print("Finally block always executes");
+}
+
+// Nested try/catch
+try {
+    print("Outer try block");
+    try {
+        print("Inner try block");
+        throw "Inner error";
+    } catch (innerError) {
+        print("Inner catch:", innerError);
+        throw "Outer error from inner catch";
+    }
+} catch (outerError) {
+    print("Outer catch:", outerError);
+}
+
+print("\n=== Arrow Functions ===");
+
+// Basic arrow functions
+var numbers = [1, 2, 3, 4, 5];
+
+// Single parameter arrow function
+var doubled = map(numbers, x => x * 2);
+print("Doubled with arrow function:", doubled);
+
+// Multiple parameter arrow function
+var pairs = map(numbers, (x, i) => x + i);
+print("Added with index:", pairs);
+
+// Arrow functions in filter
+var evens = filter(numbers, x => x % 2 == 0);
+print("Even numbers:", evens);
+
+// Arrow functions in reduce
+var sum = reduce(numbers, (acc, x) => acc + x, 0);
+print("Sum using arrow function:", sum);
+
+// Complex arrow function example
+var people = [
+    {name: "Alice", age: 25, salary: 50000},
+    {name: "Bob", age: 30, salary: 60000},
+    {name: "Charlie", age: 35, salary: 70000}
+];
+
+var highEarnerNames = map(
+    filter(people, person => person.salary >= 60000),
+    person => person.name
+);
+print("High earner names:", highEarnerNames);
+
+print("\n=== Additional Array Methods ===");
+
+// forEach - execute function for each element
+print("Using forEach:");
+forEach(numbers, x => print("Number:", x));
+
+// indexOf - find index of element
+var fruits = ["apple", "banana", "orange", "banana"];
+print("Index of 'banana':", indexOf(fruits, "banana"));
+print("Index of 'grape':", indexOf(fruits, "grape"));
+
+// includes - check if array contains element
+print("Includes 'apple':", includes(fruits, "apple"));
+print("Includes 'grape':", includes(fruits, "grape"));
+
+// slice - extract portion of array
+var sliced = slice(fruits, 1, 3);
+print("Sliced fruits (1,3):", sliced);
+
+var slicedFromTwo = slice(fruits, 2);
+print("Sliced from index 2:", slicedFromTwo);
+
+// splice - modify array by removing/adding elements
+var testArray = ["a", "b", "c", "d", "e"];
+print("Original array:", testArray);
+
+var removed = splice(testArray, 2, 1, "X", "Y");
+print("Removed elements:", removed);
+print("Array after splice:", testArray);
+
+print("\n=== Object Methods and Prototypes ===");
+
+// hasOwnProperty - check if object has property
+var person = {name: "Alice", age: 30};
+print("Has 'name' property:", hasOwnProperty(person, "name"));
+print("Has 'salary' property:", hasOwnProperty(person, "salary"));
+
+// assign - copy properties from source objects to target
+var target = {a: 1, b: 2};
+var source1 = {b: 3, c: 4};
+var source2 = {c: 5, d: 6};
+
+var result = assign(target, source1, source2);
+print("Assigned object:", result);
+print("Target object:", target); // Target is modified
+
+print("\n=== Complex Examples with Arrow Functions ===");
+
+// Shopping cart with arrow functions
+var cart = [
+    {item: "Apple", price: 1.50, quantity: 3},
+    {item: "Banana", price: 0.80, quantity: 6},
+    {item: "Orange", price: 2.00, quantity: 2}
+];
+
+// Calculate total for each item using arrow function
+var itemTotals = map(cart, item => ({
+    item: item.item,
+    total: item.price * item.quantity
+}));
+print("Item totals:", itemTotals);
+
+// Calculate grand total
+var grandTotal = reduce(itemTotals, (acc, item) => acc + item.total, 0);
+print("Grand total: $" + grandTotal);
+
+// Find expensive items (> $3 total)
+var expensiveItems = filter(itemTotals, item => item.total > 3);
+print("Expensive items:", expensiveItems);
+
+print("\n=== Error Handling with Array Methods ===");
+
+// Handling errors in array processing
+var mixedData = [1, "hello", 3, null, 5, "world"];
+
+try {
+    var processedData = map(mixedData, x => {
+        if (typeof x === "string") {
+            throw "Cannot process string: " + x;
+        }
+        if (x === null) {
+            throw "Cannot process null value";
+        }
+        return x * 2;
+    });
+    print("Processed data:", processedData);
+} catch (error) {
+    print("Error processing data:", error);
+}
+
+// Safe processing with filtering first
+var safeData = filter(mixedData, x => typeof x === "number" && x !== null);
+var safeProcessed = map(safeData, x => x * 2);
+print("Safely processed data:", safeProcessed);
+
+print("\n=== Function Composition with Arrow Functions ===");
+
+// Create reusable arrow functions
+var isEven = x => x % 2 == 0;
+var square = x => x * x;
+var add = (a, b) => a + b;
+
+// Compose functions for complex operations
+var evenSquaredSum = reduce(
+    map(filter(numbers, isEven), square),
+    add,
+    0
+);
+print("Sum of squared even numbers:", evenSquaredSum);
+
+// Create a pipeline function
+function pipeline(value, ...functions) {
+    return reduce(functions, (acc, fn) => fn(acc), value);
+}
+
+// Use pipeline with arrow functions
+var pipelineResult = pipeline(
+    numbers,
+    arr => filter(arr, isEven),
+    arr => map(arr, square),
+    arr => reduce(arr, add, 0)
+);
+print("Pipeline result:", pipelineResult);
+
+print("\n=== Advanced Object Manipulation ===");
+
+// Create objects with computed properties
+var createUser = (name, age) => ({
+    name: name,
+    age: age,
+    isAdult: age >= 18,
+    greet: () => "Hello, I'm " + name
+});
+
+var users = [
+    createUser("Alice", 25),
+    createUser("Bob", 17),
+    createUser("Charlie", 30)
+];
+
+print("Users:", users);
+
+// Filter adult users
+var adults = filter(users, user => user.isAdult);
+print("Adult users:", adults);
+
+// Extract names of adult users
+var adultNames = map(adults, user => user.name);
+print("Adult names:", adultNames);
+
+print("\n=== Exception Handling in Functional Programming ===");
+
+// Safe division function
+var safeDivide = (a, b) => {
+    if (b == 0) {
+        throw "Division by zero";
+    }
+    return a / b;
+};
+
+var numbers2 = [10, 20, 30];
+var divisors = [2, 0, 5];
+
+// Process with error handling
+for (var i in numbers2) {
+    try {
+        var result = safeDivide(numbers2[i], divisors[i]);
+        print(numbers2[i] + " / " + divisors[i] + " = " + result);
+    } catch (error) {
+        print("Error dividing " + numbers2[i] + " by " + divisors[i] + ": " + error);
+    }
+}
+
+print("\nAdvanced features demonstration completed!");

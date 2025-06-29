@@ -164,6 +164,18 @@ class CallExpr extends ASTNode {
   }
 }
 
+class ArrowFunctionExpr extends ASTNode {
+  constructor(params, body) {
+    super();
+    this.params = params;
+    this.body = body;
+  }
+
+  accept(visitor) {
+    return visitor.visitArrowFunctionExpr(this);
+  }
+}
+
 // Statements
 class ExpressionStmt extends ASTNode {
   constructor(expression) {
@@ -298,6 +310,43 @@ class ContinueStmt extends ASTNode {
   }
 }
 
+class TryStmt extends ASTNode {
+  constructor(tryBlock, catchClause, finallyBlock) {
+    super();
+    this.tryBlock = tryBlock;
+    this.catchClause = catchClause;
+    this.finallyBlock = finallyBlock;
+  }
+
+  accept(visitor) {
+    return visitor.visitTryStmt(this);
+  }
+}
+
+class CatchClause extends ASTNode {
+  constructor(param, body) {
+    super();
+    this.param = param;
+    this.body = body;
+  }
+
+  accept(visitor) {
+    return visitor.visitCatchClause(this);
+  }
+}
+
+class ThrowStmt extends ASTNode {
+  constructor(keyword, value) {
+    super();
+    this.keyword = keyword;
+    this.value = value;
+  }
+
+  accept(visitor) {
+    return visitor.visitThrowStmt(this);
+  }
+}
+
 module.exports = {
   ASTNode,
   BinaryExpr,
@@ -313,6 +362,7 @@ module.exports = {
   VariableExpr,
   AssignExpr,
   CallExpr,
+  ArrowFunctionExpr,
   ExpressionStmt,
   VarStmt,
   BlockStmt,
@@ -323,5 +373,8 @@ module.exports = {
   FunctionStmt,
   ReturnStmt,
   BreakStmt,
-  ContinueStmt
+  ContinueStmt,
+  TryStmt,
+  CatchClause,
+  ThrowStmt
 };

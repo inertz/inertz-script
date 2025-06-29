@@ -245,6 +245,121 @@ const builtins = {
     return true;
   }),
 
+  // Additional array methods
+  forEach: new InertzFunction('forEach', 2, (interpreter, args) => {
+    const array = args[0];
+    const callback = args[1];
+    
+    if (!Array.isArray(array)) {
+      throw new Error('forEach() can only be called on arrays');
+    }
+    
+    if (!(callback instanceof InertzCallable) && typeof callback.call !== 'function') {
+      throw new Error('forEach() requires a function as second argument');
+    }
+
+    for (let i = 0; i < array.length; i++) {
+      callback.call(interpreter, [array[i], i, array]);
+    }
+    
+    return null;
+  }),
+
+  indexOf: new InertzFunction('indexOf', 2, (interpreter, args) => {
+    const array = args[0];
+    const searchElement = args[1];
+    
+    if (!Array.isArray(array)) {
+      throw new Error('indexOf() can only be called on arrays');
+    }
+
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] === searchElement) {
+        return i;
+      }
+    }
+    
+    return -1;
+  }),
+
+  includes: new InertzFunction('includes', 2, (interpreter, args) => {
+    const array = args[0];
+    const searchElement = args[1];
+    
+    if (!Array.isArray(array)) {
+      throw new Error('includes() can only be called on arrays');
+    }
+
+    for (let i = 0; i < array.length; i++) {
+      if (array[i] === searchElement) {
+        return true;
+      }
+    }
+    
+    return false;
+  }),
+
+  slice: new InertzFunction('slice', 3, (interpreter, args) => {
+    const array = args[0];
+    const start = args[1] || 0;
+    const end = args[2];
+    
+    if (!Array.isArray(array)) {
+      throw new Error('slice() can only be called on arrays');
+    }
+
+    if (end === undefined) {
+      return array.slice(start);
+    } else {
+      return array.slice(start, end);
+    }
+  }),
+
+  splice: new InertzFunction('splice', -1, (interpreter, args) => {
+    const array = args[0];
+    const start = args[1];
+    const deleteCount = args[2] || 0;
+    const items = args.slice(3);
+    
+    if (!Array.isArray(array)) {
+      throw new Error('splice() can only be called on arrays');
+    }
+
+    return array.splice(start, deleteCount, ...items);
+  }),
+
+  // Object methods
+  hasOwnProperty: new InertzFunction('hasOwnProperty', 2, (interpreter, args) => {
+    const obj = args[0];
+    const prop = args[1];
+    
+    if (typeof obj !== 'object' || obj === null) {
+      throw new Error('hasOwnProperty() can only be called on objects');
+    }
+
+    return obj.hasOwnProperty(prop);
+  }),
+
+  assign: new InertzFunction('assign', -1, (interpreter, args) => {
+    if (args.length < 2) {
+      throw new Error('assign() requires at least 2 arguments');
+    }
+
+    const target = args[0];
+    if (typeof target !== 'object' || target === null) {
+      throw new Error('assign() target must be an object');
+    }
+
+    for (let i = 1; i < args.length; i++) {
+      const source = args[i];
+      if (typeof source === 'object' && source !== null) {
+        Object.assign(target, source);
+      }
+    }
+
+    return target;
+  }),
+
   input: new InertzFunction('input', 0, (interpreter, args) => {
     // Note: This is a simplified version. In a real implementation,
     // you'd want to use readline or similar for proper input handling

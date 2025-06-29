@@ -20,6 +20,10 @@ class TokenType {
   static CONTINUE = 'CONTINUE';
   static TRUE = 'TRUE';
   static FALSE = 'FALSE';
+  static TRY = 'TRY';
+  static CATCH = 'CATCH';
+  static FINALLY = 'FINALLY';
+  static THROW = 'THROW';
 
   // Operators
   static PLUS = 'PLUS';
@@ -41,6 +45,9 @@ class TokenType {
   static AND = 'AND';
   static OR = 'OR';
   static NOT = 'NOT';
+
+  // Arrow function
+  static ARROW = 'ARROW';
 
   // Punctuation
   static SEMICOLON = 'SEMICOLON';

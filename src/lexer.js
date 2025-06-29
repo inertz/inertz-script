@@ -20,6 +20,10 @@ class Lexer {
       'return': TokenType.RETURN,
       'break': TokenType.BREAK,
       'continue': TokenType.CONTINUE,
+      'try': TokenType.TRY,
+      'catch': TokenType.CATCH,
+      'finally': TokenType.FINALLY,
+      'throw': TokenType.THROW,
       'true': TokenType.TRUE,
       'false': TokenType.FALSE,
       'null': TokenType.NULL
@@ -108,7 +112,13 @@ class Lexer {
         this.addToken(this.match('=') ? TokenType.NOT_EQUAL : TokenType.NOT);
         break;
       case '=':
-        this.addToken(this.match('=') ? TokenType.EQUAL : TokenType.ASSIGN);
+        if (this.match('=')) {
+          this.addToken(TokenType.EQUAL);
+        } else if (this.match('>')) {
+          this.addToken(TokenType.ARROW);
+        } else {
+          this.addToken(TokenType.ASSIGN);
+        }
         break;
       case '<':
         this.addToken(this.match('=') ? TokenType.LESS_EQUAL : TokenType.LESS);
