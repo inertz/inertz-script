@@ -6,7 +6,7 @@ const Lexer = require('./lexer');
 const { Parser } = require('./parser');
 const { Interpreter } = require('./interpreter');
 
-class BanjarScript {
+class InertzScript {
   constructor() {
     this.interpreter = new Interpreter();
   }
@@ -38,7 +38,7 @@ class BanjarScript {
       // Interpretation
       this.interpreter.interpret(statements);
     } catch (error) {
-      console.error(`Banjar Script Error: ${error.message}`);
+      console.error(`Inertz Script Error: ${error.message}`);
       process.exit(1);
     }
   }
@@ -48,15 +48,15 @@ function main() {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log('Banjar Script v1.0.0');
+    console.log('Inertz Script v1.0.0');
     console.log('Usage: node src/main.js <file.bn>');
     console.log('       npm run repl  # Start interactive REPL');
     process.exit(0);
   }
 
   if (args.length === 1) {
-    const banjar = new BanjarScript();
-    banjar.runFile(args[0]);
+    const inertz = new InertzScript();
+    inertz.runFile(args[0]);
   } else {
     console.log('Usage: node src/main.js <file.bn>');
     process.exit(1);
@@ -67,4 +67,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = BanjarScript;
+module.exports = InertzScript;

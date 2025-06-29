@@ -1,20 +1,20 @@
 #!/usr/bin/env node
 
 const readline = require('readline');
-const BanjarScript = require('./main');
+const InertzScript = require('./main');
 
-class BanjarREPL {
+class InertzREPL {
   constructor() {
-    this.banjar = new BanjarScript();
+    this.inertz = new InertzScript();
     this.rl = readline.createInterface({
       input: process.stdin,
       output: process.stdout,
-      prompt: 'banjar> '
+      prompt: 'inertz> '
     });
   }
 
   start() {
-    console.log('Banjar Script REPL v1.0.0');
+    console.log('Inertz Script REPL v1.0.0');
     console.log('Type "exit" or press Ctrl+C to quit.');
     console.log('');
 
@@ -35,9 +35,9 @@ class BanjarREPL {
       }
 
       try {
-        this.banjar.run(input);
+        this.inertz.run(input);
       } catch (error) {
-        // Error already printed by BanjarScript
+        // Error already printed by InertzScript
       }
 
       this.rl.prompt();
@@ -56,7 +56,7 @@ class BanjarREPL {
 }
 
 function main() {
-  const repl = new BanjarREPL();
+  const repl = new InertzREPL();
   repl.start();
 }
 
@@ -64,4 +64,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = BanjarREPL;
+module.exports = InertzREPL;

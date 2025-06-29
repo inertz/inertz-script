@@ -1,4 +1,4 @@
-// Banjar Script Demo - Showcasing language features
+// Inertz Script Demo - Showcasing language features
 
 // Variable declarations
 var name = "Indra";
@@ -8,7 +8,7 @@ var isActive = true;
 var nothing = null;
 
 // Print basic information
-print("Welcome to Banjar Script!");
+print("Welcome to Inertz Script!");
 print("Name:", name);
 print("Age:", age);
 print("Pi:", pi);
@@ -89,7 +89,7 @@ print("5! =", fact5);
 
 // Built-in functions
 print("\nBuilt-in Functions:");
-print("Length of 'Banjar':", len("Banjar"));
+print("Length of 'Inertz':", len("Inertz"));
 print("Type of age:", typeof(age));
 print("Type of pi:", typeof(pi));
 print("Type of isActive:", typeof(isActive));

@@ -1,8 +1,8 @@
 const { TokenType } = require('./token');
 const Environment = require('./environment');
-const { BanjarCallable, builtins } = require('./builtins');
+const { InertzCallable, builtins } = require('./builtins');
 
-class BanjarUserFunction extends BanjarCallable {
+class InertzUserFunction extends InertzCallable {
   constructor(declaration, closure) {
     super();
     this.declaration = declaration;
@@ -125,7 +125,7 @@ class Interpreter {
   }
 
   visitFunctionStmt(stmt) {
-    const fn = new BanjarUserFunction(stmt, this.environment);
+    const fn = new InertzUserFunction(stmt, this.environment);
     this.environment.define(stmt.name.lexeme, fn);
     return null;
   }
@@ -240,7 +240,7 @@ class Interpreter {
       args.push(this.evaluate(argument));
     }
 
-    if (!(callee instanceof BanjarCallable) && typeof callee.call !== 'function') {
+    if (!(callee instanceof InertzCallable) && typeof callee.call !== 'function') {
       throw new Error('Can only call functions and classes.');
     }
 

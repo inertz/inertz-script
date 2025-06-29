@@ -1,4 +1,4 @@
-// Token types for Banjar Script
+// Token types for Inertz Script
 class TokenType {
   // Literals
   static NUMBER = 'NUMBER';

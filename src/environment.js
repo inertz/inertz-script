@@ -1,4 +1,4 @@
-// Environment for variable scoping in Banjar Script
+// Environment for variable scoping in Inertz Script
 
 class Environment {
   constructor(enclosing = null) {

@@ -1,4 +1,4 @@
-// Simple calculator in Banjar Script
+// Simple calculator in Inertz Script
 
 function calculate(op, a, b) {
     if (op == "+") {
@@ -19,8 +19,8 @@ function calculate(op, a, b) {
     }
 }
 
-print("Banjar Script Calculator");
-print("======================");
+print("Inertz Script Calculator");
+print("========================");
 
 var num1 = 15;
 var num2 = 4;

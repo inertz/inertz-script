@@ -1,10 +1,14 @@
-// Built-in functions for Banjar Script
+// Built-in functions for Inertz Script
 
-class BanjarFunction {
+class InertzFunction {
   constructor(name, arity, fn) {
     this.name = name;
-    this.arity = arity;
+    this._arity = arity;
     this.fn = fn;
+  }
+
+  arity() {
+    return this._arity;
   }
 
   call(interpreter, args) {
@@ -16,7 +20,7 @@ class BanjarFunction {
   }
 }
 
-class BanjarCallable {
+class InertzCallable {
   call(interpreter, args) {
     throw new Error('call() must be implemented by subclasses');
   }
@@ -28,13 +32,13 @@ class BanjarCallable {
 
 // Built-in function implementations
 const builtins = {
-  print: new BanjarFunction('print', -1, (interpreter, args) => {
+  print: new InertzFunction('print', -1, (interpreter, args) => {
     const output = args.map(arg => interpreter.stringify(arg)).join(' ');
     console.log(output);
     return null;
   }),
 
-  len: new BanjarFunction('len', 1, (interpreter, args) => {
+  len: new InertzFunction('len', 1, (interpreter, args) => {
     const arg = args[0];
     if (typeof arg === 'string') {
       return arg.length;
@@ -45,7 +49,7 @@ const builtins = {
     throw new Error('len() can only be called on strings and arrays');
   }),
 
-  typeof: new BanjarFunction('typeof', 1, (interpreter, args) => {
+  typeof: new InertzFunction('typeof', 1, (interpreter, args) => {
     const arg = args[0];
     if (arg === null) return 'null';
     if (typeof arg === 'boolean') return 'bool';
@@ -55,11 +59,11 @@ const builtins = {
     if (typeof arg === 'string') return 'string';
     if (Array.isArray(arg)) return 'array';
     if (typeof arg === 'object') return 'object';
-    if (typeof arg === 'function' || arg instanceof BanjarCallable) return 'function';
+    if (typeof arg === 'function' || arg instanceof InertzCallable) return 'function';
     return 'unknown';
   }),
 
-  input: new BanjarFunction('input', 0, (interpreter, args) => {
+  input: new InertzFunction('input', 0, (interpreter, args) => {
     // Note: This is a simplified version. In a real implementation,
     // you'd want to use readline or similar for proper input handling
     const prompt = args.length > 0 ? interpreter.stringify(args[0]) : '';
@@ -71,7 +75,7 @@ const builtins = {
   }),
 
   // Math functions
-  abs: new BanjarFunction('abs', 1, (interpreter, args) => {
+  abs: new InertzFunction('abs', 1, (interpreter, args) => {
     const num = args[0];
     if (typeof num !== 'number') {
       throw new Error('abs() expects a number');
@@ -79,7 +83,7 @@ const builtins = {
     return Math.abs(num);
   }),
 
-  floor: new BanjarFunction('floor', 1, (interpreter, args) => {
+  floor: new InertzFunction('floor', 1, (interpreter, args) => {
     const num = args[0];
     if (typeof num !== 'number') {
       throw new Error('floor() expects a number');
@@ -87,7 +91,7 @@ const builtins = {
     return Math.floor(num);
   }),
 
-  ceil: new BanjarFunction('ceil', 1, (interpreter, args) => {
+  ceil: new InertzFunction('ceil', 1, (interpreter, args) => {
     const num = args[0];
     if (typeof num !== 'number') {
       throw new Error('ceil() expects a number');
@@ -95,7 +99,7 @@ const builtins = {
     return Math.ceil(num);
   }),
 
-  round: new BanjarFunction('round', 1, (interpreter, args) => {
+  round: new InertzFunction('round', 1, (interpreter, args) => {
     const num = args[0];
     if (typeof num !== 'number') {
       throw new Error('round() expects a number');
@@ -103,7 +107,7 @@ const builtins = {
     return Math.round(num);
   }),
 
-  sqrt: new BanjarFunction('sqrt', 1, (interpreter, args) => {
+  sqrt: new InertzFunction('sqrt', 1, (interpreter, args) => {
     const num = args[0];
     if (typeof num !== 'number') {
       throw new Error('sqrt() expects a number');
@@ -111,7 +115,7 @@ const builtins = {
     return Math.sqrt(num);
   }),
 
-  pow: new BanjarFunction('pow', 2, (interpreter, args) => {
+  pow: new InertzFunction('pow', 2, (interpreter, args) => {
     const base = args[0];
     const exp = args[1];
     if (typeof base !== 'number' || typeof exp !== 'number') {
@@ -121,4 +125,4 @@ const builtins = {
   })
 };
 
-module.exports = { BanjarFunction, BanjarCallable, builtins };
+module.exports = { InertzFunction, InertzCallable, builtins };

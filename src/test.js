@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-const BanjarScript = require('./main');
+const InertzScript = require('./main');
 
-class BanjarTester {
+class InertzTester {
   constructor() {
-    this.banjar = new BanjarScript();
+    this.inertz = new InertzScript();
     this.passed = 0;
     this.failed = 0;
   }
@@ -20,7 +20,7 @@ class BanjarTester {
         outputs.push(args.join(' '));
       };
 
-      this.banjar.run(code);
+      this.inertz.run(code);
 
       // Restore console.log
       console.log = originalLog;
@@ -51,7 +51,7 @@ class BanjarTester {
   }
 
   runTests() {
-    console.log('Banjar Script Test Suite');
+    console.log('Inertz Script Test Suite');
     console.log('========================');
 
     // Basic arithmetic
@@ -153,7 +153,7 @@ class BanjarTester {
 }
 
 function main() {
-  const tester = new BanjarTester();
+  const tester = new InertzTester();
   tester.runTests();
 }
 
@@ -161,4 +161,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = BanjarTester;
+module.exports = InertzTester;

@@ -1,4 +1,4 @@
-// Fibonacci sequence in Banjar Script
+// Fibonacci sequence in Inertz Script
 
 function fibonacci(n) {
     if (n <= 1) {

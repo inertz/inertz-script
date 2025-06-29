@@ -1,4 +1,4 @@
-# Banjar Script
+# Inertz Script
 
 A JavaScript-inspired interpreted programming language with C++-like structure, built in Node.js.
 
@@ -35,7 +35,7 @@ A JavaScript-inspired interpreted programming language with C++-like structure, 
 # Install dependencies
 npm install
 
-# Run a Banjar Script file
+# Run a Inertz Script file
 npm start examples/demo.bn
 npm run example
 
@@ -48,11 +48,11 @@ node src/main.js path/to/your/file.bn
 # Start the REPL
 npm run repl
 
-# In REPL, type Banjar Script code:
-banjar> var x = 10;
-banjar> print(x * 2);
+# In REPL, type Inertz Script code:
+inertz> var x = 10;
+inertz> print(x * 2);
 20
-banjar> exit
+inertz> exit
 ```
 
 ### Running Tests
@@ -62,7 +62,7 @@ npm test
 
 ## Example Code
 
-```banjar
+```inertz
 // Variables and basic operations
 var name = "Indra";
 var age = 25;
@@ -107,7 +107,7 @@ print("Square root of 16:", sqrt(16));
 ## Project Structure
 
 ```
-banjar-script/
+inertz-script/
 ├── src/
 │   ├── main.js         # Main CLI interface
 │   ├── repl.js         # Interactive REPL
@@ -128,7 +128,7 @@ banjar-script/
 
 ## Language Design
 
-Banjar Script follows these design principles:
+Inertz Script follows these design principles:
 
 1. **Familiar Syntax**: JavaScript-inspired syntax for ease of learning
 2. **Strong Foundation**: Proper lexer, parser, and AST-based interpreter

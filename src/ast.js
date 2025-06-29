@@ -1,4 +1,4 @@
-// Abstract Syntax Tree node definitions for Banjar Script
+// Abstract Syntax Tree node definitions for Inertz Script
 
 class ASTNode {
   accept(visitor) {
