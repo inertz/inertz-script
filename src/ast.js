@@ -276,6 +276,28 @@ class ReturnStmt extends ASTNode {
   }
 }
 
+class BreakStmt extends ASTNode {
+  constructor(keyword) {
+    super();
+    this.keyword = keyword;
+  }
+
+  accept(visitor) {
+    return visitor.visitBreakStmt(this);
+  }
+}
+
+class ContinueStmt extends ASTNode {
+  constructor(keyword) {
+    super();
+    this.keyword = keyword;
+  }
+
+  accept(visitor) {
+    return visitor.visitContinueStmt(this);
+  }
+}
+
 module.exports = {
   ASTNode,
   BinaryExpr,
@@ -299,5 +321,7 @@ module.exports = {
   ForStmt,
   ForInStmt,
   FunctionStmt,
-  ReturnStmt
+  ReturnStmt,
+  BreakStmt,
+  ContinueStmt
 };

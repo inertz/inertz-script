@@ -16,6 +16,8 @@ class TokenType {
   static FOR = 'FOR';
   static IN = 'IN';
   static RETURN = 'RETURN';
+  static BREAK = 'BREAK';
+  static CONTINUE = 'CONTINUE';
   static TRUE = 'TRUE';
   static FALSE = 'FALSE';
 

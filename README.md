@@ -17,6 +17,7 @@ A JavaScript-inspired interpreted programming language with C++-like structure, 
 - **Functions**: `function name(params) { ... }`
 - **Control Flow**: `if/else`, `while` loops, `for` loops
 - **For-In Loops**: `for (var key in object)` and `for (var index in array)`
+- **Loop Control**: `break` and `continue` statements
 - **Operators**: Arithmetic (`+`, `-`, `*`, `/`, `%`), Comparison (`==`, `!=`, `>`, `<`, `>=`, `<=`), Logical (`&&`, `||`, `!`)
 - **Ternary**: `condition ? true_value : false_value`
 - **Array Access**: `array[index]`
@@ -54,6 +55,9 @@ node src/main.js examples/arrays-objects.bn
 # Run for loops example
 node src/main.js examples/for-loops.bn
 
+# Run break and continue example
+node src/main.js examples/break-continue.bn
+
 # Run specific file
 node src/main.js path/to/your/file.bn
 ```
@@ -65,9 +69,11 @@ npm run repl
 
 # In REPL, type Inertz Script code:
 inertz> var x = [1, 2, 3];
-inertz> for (var i in x) { print(i, x[i]); }
+inertz> for (var i in x) { 
+...       if (i == 1) continue;
+...       print(i, x[i]); 
+...     }
 0 1
-1 2
 2 3
 inertz> exit
 ```
@@ -84,54 +90,95 @@ npm test
 var name = "Alice";
 var numbers = [1, 2, 3, 4, 5];
 
-// Traditional for loop
+// Traditional for loop with break
 for (var i = 0; i < len(numbers); i = i + 1) {
-    print("Number at index", i, ":", numbers[i]);
+    if (numbers[i] == 3) {
+        print("Found 3, breaking!");
+        break;
+    }
+    print("Number:", numbers[i]);
 }
 
-// For-in loop with arrays (iterates over indices)
+// For-in loop with continue
 for (var index in numbers) {
-    print("Index", index, "value:", numbers[index]);
-}
-
-// Objects and for-in loops
-var person = {
-    name: "Alice",
-    age: 30,
-    city: "New York"
-};
-
-// For-in loop with objects (iterates over keys)
-for (var key in person) {
-    print(key + ":", person[key]);
-}
-
-// Nested loops
-var matrix = [
-    [1, 2, 3],
-    [4, 5, 6],
-    [7, 8, 9]
-];
-
-for (var row = 0; row < len(matrix); row = row + 1) {
-    for (var col = 0; col < len(matrix[row]); col = col + 1) {
-        print("matrix[" + row + "][" + col + "] =", matrix[row][col]);
+    if (numbers[index] % 2 == 0) {
+        continue; // Skip even numbers
     }
+    print("Odd number:", numbers[index]);
 }
 
-// Functions with loops
-function findMax(arr) {
-    var max = arr[0];
-    for (var i = 1; i < len(arr); i = i + 1) {
-        if (arr[i] > max) {
-            max = arr[i];
+// While loop with break and continue
+var count = 0;
+while (count < 10) {
+    count = count + 1;
+    if (count % 3 == 0) {
+        continue; // Skip multiples of 3
+    }
+    if (count > 7) {
+        break; // Exit when count > 7
+    }
+    print("Count:", count);
+}
+
+// Nested loops with break
+for (var row = 1; row <= 3; row = row + 1) {
+    for (var col = 1; col <= 3; col = col + 1) {
+        if (row == 2 && col == 2) {
+            print("Breaking inner loop");
+            break;
         }
+        print("Position:", row, col);
     }
-    return max;
 }
+```
 
-var scores = [85, 92, 78, 96, 88];
-print("Maximum score:", findMax(scores));
+## Loop Control Statements
+
+### Break Statement
+- **Purpose**: Immediately exit the current loop
+- **Usage**: `break;`
+- **Works with**: `while`, `for`, and `for-in` loops
+- **Behavior**: Exits only the innermost loop containing the break statement
+
+```inertz
+for (var i = 0; i < 10; i = i + 1) {
+    if (i == 5) {
+        break; // Exit loop when i equals 5
+    }
+    print(i); // Prints 0, 1, 2, 3, 4
+}
+```
+
+### Continue Statement
+- **Purpose**: Skip the rest of the current iteration and continue with the next
+- **Usage**: `continue;`
+- **Works with**: `while`, `for`, and `for-in` loops
+- **Behavior**: Jumps to the next iteration of the innermost loop
+
+```inertz
+for (var i = 0; i < 5; i = i + 1) {
+    if (i == 2) {
+        continue; // Skip when i equals 2
+    }
+    print(i); // Prints 0, 1, 3, 4
+}
+```
+
+### Nested Loop Control
+- Break and continue only affect the innermost loop
+- To break out of multiple nested loops, use flags or function returns
+
+```inertz
+var found = false;
+for (var i = 0; i < 3 && !found; i = i + 1) {
+    for (var j = 0; j < 3; j = j + 1) {
+        if (i == 1 && j == 1) {
+            found = true;
+            break; // Only breaks inner loop
+        }
+        print(i, j);
+    }
+}
 ```
 
 ## Loop Types
@@ -139,6 +186,8 @@ print("Maximum score:", findMax(scores));
 ### Traditional For Loop
 ```inertz
 for (var i = 0; i < 10; i = i + 1) {
+    if (i == 5) break;
+    if (i % 2 == 0) continue;
     print(i);
 }
 ```
@@ -147,23 +196,28 @@ for (var i = 0; i < 10; i = i + 1) {
 ```inertz
 var fruits = ["apple", "banana", "orange"];
 for (var index in fruits) {
+    if (fruits[index] == "banana") continue;
     print("Index:", index, "Fruit:", fruits[index]);
 }
 ```
 
 ### For-In Loop with Objects
 ```inertz
-var person = {name: "Alice", age: 30};
+var person = {name: "Alice", age: 30, city: "New York"};
 for (var key in person) {
+    if (key == "age") continue;
     print(key + ":", person[key]);
 }
 ```
 
-### For-In Loop with Strings
+### While Loop
 ```inertz
-var message = "Hello";
-for (var i in message) {
-    print("Character at", i, ":", message[i]);
+var i = 0;
+while (i < 10) {
+    i = i + 1;
+    if (i % 2 == 0) continue;
+    if (i > 7) break;
+    print(i);
 }
 ```
 
@@ -187,7 +241,8 @@ inertz-script/
 │   ├── fibonacci.bn    # Fibonacci sequence
 │   ├── calculator.bn   # Simple calculator
 │   ├── arrays-objects.bn # Arrays and objects demo
-│   └── for-loops.bn    # For loops demonstration
+│   ├── for-loops.bn    # For loops demonstration
+│   └── break-continue.bn # Break and continue examples
 └── README.md
 ```
 
@@ -202,6 +257,7 @@ Inertz Script follows these design principles:
 5. **Error Handling**: Comprehensive error reporting
 6. **Rich Data Types**: Support for arrays and objects with intuitive syntax
 7. **Flexible Iteration**: Multiple loop types for different use cases
+8. **Structured Control Flow**: Break and continue for precise loop control
 
 ## Technical Implementation
 
@@ -212,31 +268,32 @@ Inertz Script follows these design principles:
 - **Built-ins**: Native function support with proper arity checking
 - **Data Structures**: Native JavaScript arrays and objects with Inertz Script syntax
 - **Loop Constructs**: Traditional for loops and for-in iteration
+- **Exception Handling**: Break and continue implemented as controlled exceptions
 
-## For Loop Features
+## Control Flow Features
 
-### Traditional For Loops
-- **Syntax**: `for (initializer; condition; increment) { body }`
-- **Use case**: When you need precise control over iteration
-- **Example**: Counting, array traversal with indices
+### Exception-Based Control Flow
+- Break and continue are implemented using JavaScript exceptions
+- Exceptions are caught and handled appropriately within loop constructs
+- Only affects the immediate containing loop (proper scoping)
 
-### For-In Loops
-- **Arrays**: Iterates over array indices (0, 1, 2, ...)
-- **Objects**: Iterates over object keys
-- **Strings**: Iterates over character indices
-- **Syntax**: `for (var variable in iterable) { body }`
+### Loop Scoping
+- Each loop creates its own environment scope
+- Variables declared in loop initializers are properly scoped
+- Break and continue respect lexical scoping rules
 
-### Scoping
-- Loop variables are properly scoped within the loop environment
-- Variables declared in loop initializers are accessible throughout the loop
-- Nested loops maintain separate scopes
+### Error Handling
+- Break and continue outside of loops result in runtime errors
+- Proper error messages guide developers to correct usage
+- Nested loop behavior is clearly defined and predictable
 
 ## Future Enhancements
 
-- Break and continue statements
+- Labeled break and continue statements
 - Array methods (map, filter, reduce)
 - Object methods and prototypes
 - Import/export system
 - Standard library modules
 - Bytecode compilation
 - Debugging support
+- Exception handling (try/catch/finally)

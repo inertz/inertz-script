@@ -2,7 +2,8 @@ const { TokenType } = require('./token');
 const {
   BinaryExpr, UnaryExpr, TernaryExpr, LiteralExpr, ArrayExpr, ObjectExpr,
   GetExpr, SetExpr, IndexExpr, IndexSetExpr, VariableExpr, AssignExpr, CallExpr,
-  ExpressionStmt, VarStmt, BlockStmt, IfStmt, WhileStmt, ForStmt, ForInStmt, FunctionStmt, ReturnStmt
+  ExpressionStmt, VarStmt, BlockStmt, IfStmt, WhileStmt, ForStmt, ForInStmt, 
+  FunctionStmt, ReturnStmt, BreakStmt, ContinueStmt
 } = require('./ast');
 
 class ParseError extends Error {
@@ -86,6 +87,8 @@ class Parser {
     if (this.match(TokenType.WHILE)) return this.whileStatement();
     if (this.match(TokenType.FOR)) return this.forStatement();
     if (this.match(TokenType.RETURN)) return this.returnStatement();
+    if (this.match(TokenType.BREAK)) return this.breakStatement();
+    if (this.match(TokenType.CONTINUE)) return this.continueStatement();
     if (this.match(TokenType.LEFT_BRACE)) return new BlockStmt(this.block());
 
     return this.expressionStatement();
@@ -186,6 +189,18 @@ class Parser {
 
     this.consume(TokenType.SEMICOLON, "Expected ';' after return value.");
     return new ReturnStmt(keyword, value);
+  }
+
+  breakStatement() {
+    const keyword = this.previous();
+    this.consume(TokenType.SEMICOLON, "Expected ';' after 'break'.");
+    return new BreakStmt(keyword);
+  }
+
+  continueStatement() {
+    const keyword = this.previous();
+    this.consume(TokenType.SEMICOLON, "Expected ';' after 'continue'.");
+    return new ContinueStmt(keyword);
   }
 
   block() {
@@ -491,6 +506,8 @@ class Parser {
         case TokenType.IF:
         case TokenType.WHILE:
         case TokenType.RETURN:
+        case TokenType.BREAK:
+        case TokenType.CONTINUE:
           return;
       }
 

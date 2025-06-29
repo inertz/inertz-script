@@ -18,6 +18,8 @@ class Lexer {
       'for': TokenType.FOR,
       'in': TokenType.IN,
       'return': TokenType.RETURN,
+      'break': TokenType.BREAK,
+      'continue': TokenType.CONTINUE,
       'true': TokenType.TRUE,
       'false': TokenType.FALSE,
       'null': TokenType.NULL

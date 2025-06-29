@@ -1,0 +1,184 @@
+// Break and Continue statements demonstration in Inertz Script
+
+print("=== Break Statement ===");
+
+// Break in while loop
+print("While loop with break:");
+var i = 0;
+while (true) {
+    if (i >= 5) {
+        break;
+    }
+    print("i =", i);
+    i = i + 1;
+}
+print("Exited while loop");
+
+// Break in for loop
+print("\nFor loop with break:");
+for (var j = 0; j < 10; j = j + 1) {
+    if (j == 3) {
+        print("Breaking at j =", j);
+        break;
+    }
+    print("j =", j);
+}
+print("Exited for loop");
+
+// Break in for-in loop with array
+print("\nFor-in loop with array and break:");
+var numbers = [10, 20, 30, 40, 50];
+for (var index in numbers) {
+    if (numbers[index] == 30) {
+        print("Found 30, breaking!");
+        break;
+    }
+    print("numbers[" + index + "] =", numbers[index]);
+}
+
+// Break in for-in loop with object
+print("\nFor-in loop with object and break:");
+var person = {name: "Alice", age: 30, city: "New York", country: "USA"};
+for (var key in person) {
+    if (key == "city") {
+        print("Found city, breaking!");
+        break;
+    }
+    print(key + ":", person[key]);
+}
+
+print("\n=== Continue Statement ===");
+
+// Continue in while loop
+print("While loop with continue:");
+var k = 0;
+while (k < 8) {
+    k = k + 1;
+    if (k % 2 == 0) {
+        continue; // Skip even numbers
+    }
+    print("Odd number:", k);
+}
+
+// Continue in for loop
+print("\nFor loop with continue:");
+for (var m = 1; m <= 10; m = m + 1) {
+    if (m % 3 == 0) {
+        continue; // Skip multiples of 3
+    }
+    print("Not divisible by 3:", m);
+}
+
+// Continue in for-in loop with array
+print("\nFor-in loop with array and continue:");
+var values = [1, -2, 3, -4, 5, -6, 7];
+for (var idx in values) {
+    if (values[idx] < 0) {
+        continue; // Skip negative numbers
+    }
+    print("Positive value:", values[idx]);
+}
+
+// Continue in for-in loop with object
+print("\nFor-in loop with object and continue:");
+var scores = {math: 85, english: 92, science: 78, history: 96};
+for (var subject in scores) {
+    if (scores[subject] < 80) {
+        continue; // Skip low scores
+    }
+    print("Good score in", subject + ":", scores[subject]);
+}
+
+print("\n=== Nested Loops with Break and Continue ===");
+
+// Nested loops with break
+print("Nested loops with break:");
+for (var row = 1; row <= 3; row = row + 1) {
+    print("Row", row + ":");
+    for (var col = 1; col <= 5; col = col + 1) {
+        if (col == 4) {
+            print("  Breaking inner loop at col", col);
+            break;
+        }
+        print("  Col", col);
+    }
+}
+
+// Nested loops with continue
+print("\nNested loops with continue:");
+for (var x = 1; x <= 3; x = x + 1) {
+    print("Outer loop x =", x);
+    for (var y = 1; y <= 4; y = y + 1) {
+        if (y == 2) {
+            print("  Skipping y =", y);
+            continue;
+        }
+        print("  Inner loop y =", y);
+    }
+}
+
+print("\n=== Practical Examples ===");
+
+// Find first even number greater than 10
+print("Finding first even number greater than 10:");
+var nums = [3, 7, 11, 15, 12, 18, 21, 14];
+var found = null;
+for (var i in nums) {
+    var num = nums[i];
+    if (num <= 10) {
+        continue; // Skip numbers <= 10
+    }
+    if (num % 2 == 0) {
+        found = num;
+        print("Found:", found);
+        break; // Stop searching
+    }
+}
+
+// Process valid items only
+print("\nProcessing valid items:");
+var items = ["apple", "", "banana", null, "orange", "grape", ""];
+var processed = 0;
+for (var i in items) {
+    var item = items[i];
+    if (item == null || item == "") {
+        continue; // Skip invalid items
+    }
+    print("Processing:", item);
+    processed = processed + 1;
+    if (processed >= 3) {
+        print("Processed enough items, stopping");
+        break;
+    }
+}
+
+// Search in nested data
+print("\nSearching in nested data:");
+var departments = {
+    engineering: ["Alice", "Bob", "Charlie"],
+    marketing: ["David", "Eve"],
+    sales: ["Frank", "Grace", "Henry"]
+};
+
+var searchName = "Eve";
+var foundDept = null;
+
+for (var dept in departments) {
+    var employees = departments[dept];
+    for (var i in employees) {
+        if (employees[i] == searchName) {
+            foundDept = dept;
+            print("Found", searchName, "in", dept);
+            break; // Break inner loop
+        }
+    }
+    if (foundDept != null) {
+        break; // Break outer loop
+    }
+}
+
+if (foundDept == null) {
+    print(searchName, "not found");
+}
+
+print("\nBreak and continue demonstration completed!");

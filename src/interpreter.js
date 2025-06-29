@@ -47,6 +47,18 @@ class ReturnException extends Error {
   }
 }
 
+class BreakException extends Error {
+  constructor() {
+    super();
+  }
+}
+
+class ContinueException extends Error {
+  constructor() {
+    super();
+  }
+}
+
 class Interpreter {
   constructor() {
     this.globals = new Environment();
@@ -121,8 +133,22 @@ class Interpreter {
   }
 
   visitWhileStmt(stmt) {
-    while (this.isTruthy(this.evaluate(stmt.condition))) {
-      this.execute(stmt.body);
+    try {
+      while (this.isTruthy(this.evaluate(stmt.condition))) {
+        try {
+          this.execute(stmt.body);
+        } catch (error) {
+          if (error instanceof ContinueException) {
+            continue; // Skip to next iteration
+          }
+          throw error; // Re-throw other exceptions (including break)
+        }
+      }
+    } catch (error) {
+      if (error instanceof BreakException) {
+        return null; // Exit the loop normally
+      }
+      throw error; // Re-throw other exceptions
     }
     return null;
   }
@@ -141,20 +167,38 @@ class Interpreter {
       }
 
       // Loop
-      while (true) {
-        // Check condition
-        if (stmt.condition !== null) {
-          if (!this.isTruthy(this.evaluate(stmt.condition))) {
-            break;
+      try {
+        while (true) {
+          // Check condition
+          if (stmt.condition !== null) {
+            if (!this.isTruthy(this.evaluate(stmt.condition))) {
+              break;
+            }
+          }
+
+          // Execute body
+          try {
+            this.execute(stmt.body);
+          } catch (error) {
+            if (error instanceof ContinueException) {
+              // Continue to increment step
+            } else if (error instanceof BreakException) {
+              break; // Exit the loop
+            } else {
+              throw error; // Re-throw other exceptions
+            }
+          }
+
+          // Execute increment
+          if (stmt.increment !== null) {
+            this.evaluate(stmt.increment);
           }
         }
-
-        // Execute body
-        this.execute(stmt.body);
-
-        // Execute increment
-        if (stmt.increment !== null) {
-          this.evaluate(stmt.increment);
+      } catch (error) {
+        if (error instanceof BreakException) {
+          // Loop was broken, this is normal
+        } else {
+          throw error; // Re-throw other exceptions
         }
       }
     } finally {
@@ -176,21 +220,76 @@ class Interpreter {
 
       if (Array.isArray(iterable)) {
         // Iterate over array indices
-        for (let i = 0; i < iterable.length; i++) {
-          this.environment.define(stmt.variable.lexeme, i);
-          this.execute(stmt.body);
+        try {
+          for (let i = 0; i < iterable.length; i++) {
+            this.environment.define(stmt.variable.lexeme, i);
+            try {
+              this.execute(stmt.body);
+            } catch (error) {
+              if (error instanceof ContinueException) {
+                continue; // Skip to next iteration
+              } else if (error instanceof BreakException) {
+                break; // Exit the loop
+              } else {
+                throw error; // Re-throw other exceptions
+              }
+            }
+          }
+        } catch (error) {
+          if (error instanceof BreakException) {
+            // Loop was broken, this is normal
+          } else {
+            throw error; // Re-throw other exceptions
+          }
         }
       } else if (typeof iterable === 'object' && iterable !== null) {
         // Iterate over object keys
-        for (const key of Object.keys(iterable)) {
-          this.environment.define(stmt.variable.lexeme, key);
-          this.execute(stmt.body);
+        const keys = Object.keys(iterable);
+        try {
+          for (const key of keys) {
+            this.environment.define(stmt.variable.lexeme, key);
+            try {
+              this.execute(stmt.body);
+            } catch (error) {
+              if (error instanceof ContinueException) {
+                continue; // Skip to next iteration
+              } else if (error instanceof BreakException) {
+                break; // Exit the loop
+              } else {
+                throw error; // Re-throw other exceptions
+              }
+            }
+          }
+        } catch (error) {
+          if (error instanceof BreakException) {
+            // Loop was broken, this is normal
+          } else {
+            throw error; // Re-throw other exceptions
+          }
         }
       } else if (typeof iterable === 'string') {
         // Iterate over string indices
-        for (let i = 0; i < iterable.length; i++) {
-          this.environment.define(stmt.variable.lexeme, i);
-          this.execute(stmt.body);
+        try {
+          for (let i = 0; i < iterable.length; i++) {
+            this.environment.define(stmt.variable.lexeme, i);
+            try {
+              this.execute(stmt.body);
+            } catch (error) {
+              if (error instanceof ContinueException) {
+                continue; // Skip to next iteration
+              } else if (error instanceof BreakException) {
+                break; // Exit the loop
+              } else {
+                throw error; // Re-throw other exceptions
+              }
+            }
+          }
+        } catch (error) {
+          if (error instanceof BreakException) {
+            // Loop was broken, this is normal
+          } else {
+            throw error; // Re-throw other exceptions
+          }
         }
       } else {
         throw new Error(`Cannot iterate over ${typeof iterable}`);
@@ -217,6 +316,14 @@ class Interpreter {
     }
 
     throw new ReturnException(value);
+  }
+
+  visitBreakStmt(stmt) {
+    throw new BreakException();
+  }
+
+  visitContinueStmt(stmt) {
+    throw new ContinueException();
   }
 
   // Visit methods for expressions
@@ -477,4 +584,4 @@ class Interpreter {
   }
 }
 
-module.exports = { Interpreter, ReturnException };
+module.exports = { Interpreter, ReturnException, BreakException, ContinueException };
