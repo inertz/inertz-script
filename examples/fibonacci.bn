@@ -1,0 +1,21 @@
+// Fibonacci sequence in Banjar Script
+
+function fibonacci(n) {
+    if (n <= 1) {
+        return n;
+    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+function printFibonacci(count) {
+    print("Fibonacci sequence up to", count, "terms:");
+    
+    var i = 0;
+    while (i < count) {
+        var fib = fibonacci(i);
+        print("F(" + i + ") =", fib);
+        i = i + 1;
+    }
+}
+
+printFibonacci(10);

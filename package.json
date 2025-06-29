@@ -1,0 +1,18 @@
+{
+  "name": "banjar-script",
+  "version": "1.0.0",
+  "description": "Banjar Script - A JavaScript-inspired interpreted programming language",
+  "main": "src/main.js",
+  "private": true,
+  "scripts": {
+    "start": "node src/main.js",
+    "repl": "node src/repl.js",
+    "test": "node src/test.js",
+    "example": "node src/main.js examples/demo.bn"
+  },
+  "keywords": ["interpreter", "programming-language", "banjar-script"],
+  "author": "Banjar Script Team",
+  "dependencies": {
+    "readline": "^1.3.0"
+  }
+}

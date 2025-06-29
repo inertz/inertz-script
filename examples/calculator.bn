@@ -1,0 +1,36 @@
+// Simple calculator in Banjar Script
+
+function calculate(op, a, b) {
+    if (op == "+") {
+        return a + b;
+    } else if (op == "-") {
+        return a - b;
+    } else if (op == "*") {
+        return a * b;
+    } else if (op == "/") {
+        if (b == 0) {
+            print("Error: Division by zero!");
+            return null;
+        }
+        return a / b;
+    } else {
+        print("Error: Unknown operator", op);
+        return null;
+    }
+}
+
+print("Banjar Script Calculator");
+print("======================");
+
+var num1 = 15;
+var num2 = 4;
+
+print(num1, "+", num2, "=", calculate("+", num1, num2));
+print(num1, "-", num2, "=", calculate("-", num1, num2));
+print(num1, "*", num2, "=", calculate("*", num1, num2));
+print(num1, "/", num2, "=", calculate("/", num1, num2));
+
+// Test edge cases
+print("\nEdge cases:");
+print("10 / 0 =", calculate("/", 10, 0));
+print("5 % 2 = Unknown operator test:", calculate("%", 5, 2));

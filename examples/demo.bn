@@ -1,0 +1,107 @@
+// Banjar Script Demo - Showcasing language features
+
+// Variable declarations
+var name = "Indra";
+var age = 25;
+var pi = 3.14159;
+var isActive = true;
+var nothing = null;
+
+// Print basic information
+print("Welcome to Banjar Script!");
+print("Name:", name);
+print("Age:", age);
+print("Pi:", pi);
+print("Active:", isActive);
+print("Nothing:", nothing);
+
+// Math operations
+var a = 10;
+var b = 3;
+print("\nMath Operations:");
+print(a, "+", b, "=", a + b);
+print(a, "-", b, "=", a - b);
+print(a, "*", b, "=", a * b);
+print(a, "/", b, "=", a / b);
+print(a, "%", b, "=", a % b);
+
+// Comparison operations
+print("\nComparisons:");
+print(a, ">", b, ":", a > b);
+print(a, "<", b, ":", a < b);
+print(a, "==", b, ":", a == b);
+print(a, "!=", b, ":", a != b);
+
+// Logical operations
+var x = true;
+var y = false;
+print("\nLogical Operations:");
+print(x, "&&", y, ":", x && y);
+print(x, "||", y, ":", x || y);
+print("!", x, ":", !x);
+
+// Ternary operator
+var max = a > b ? a : b;
+print("\nTernary: max of", a, "and", b, "is", max);
+
+// Control flow - if/else
+print("\nControl Flow:");
+if (age >= 18) {
+    print("You are an adult");
+} else {
+    print("You are a minor");
+}
+
+// While loop
+print("\nCountdown:");
+var count = 5;
+while (count > 0) {
+    print(count);
+    count = count - 1;
+}
+print("Blast off!");
+
+// Function definition and calls
+function greet(person) {
+    print("Hello, " + person + "!");
+}
+
+function add(x, y) {
+    return x + y;
+}
+
+function factorial(n) {
+    if (n <= 1) {
+        return 1;
+    }
+    return n * factorial(n - 1);
+}
+
+print("\nFunctions:");
+greet("World");
+greet(name);
+
+var sum = add(15, 25);
+print("15 + 25 =", sum);
+
+var fact5 = factorial(5);
+print("5! =", fact5);
+
+// Built-in functions
+print("\nBuilt-in Functions:");
+print("Length of 'Banjar':", len("Banjar"));
+print("Type of age:", typeof(age));
+print("Type of pi:", typeof(pi));
+print("Type of isActive:", typeof(isActive));
+print("Type of nothing:", typeof(nothing));
+
+// Math built-ins
+print("\nMath Functions:");
+print("abs(-10):", abs(-10));
+print("floor(3.7):", floor(3.7));
+print("ceil(3.2):", ceil(3.2));
+print("round(3.6):", round(3.6));
+print("sqrt(16):", sqrt(16));
+print("pow(2, 3):", pow(2, 3));
+
+print("\nDemo completed successfully!");
