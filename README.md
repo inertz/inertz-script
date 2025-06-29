@@ -24,13 +24,29 @@ A JavaScript-inspired interpreted programming language with C++-like structure, 
 - **Object Access**: `object.property` or `object["property"]`
 
 ### Built-in Functions
+
+#### Basic Functions
 - `print(...)` - Output to console
 - `len(value)` - Get length of string, array, or object
 - `typeof(value)` - Get type of value
+
+#### Array Manipulation
 - `push(array, value)` - Add element to array
 - `pop(array)` - Remove and return last element from array
+
+#### Array Methods (Functional Programming)
+- `map(array, function)` - Transform each element using a function
+- `filter(array, function)` - Keep elements that match a condition
+- `reduce(array, function, initialValue)` - Combine all elements into single value
+- `find(array, function)` - Get first element that matches condition
+- `some(array, function)` - Check if any element matches condition
+- `every(array, function)` - Check if all elements match condition
+
+#### Object Functions
 - `keys(object)` - Get array of object keys
 - `values(object)` - Get array of object values
+
+#### Math Functions
 - `abs(number)` - Absolute value
 - `floor(number)` - Floor function
 - `ceil(number)` - Ceiling function
@@ -58,6 +74,9 @@ node src/main.js examples/for-loops.is
 # Run break and continue example
 node src/main.js examples/break-continue.is
 
+# Run array methods example
+node src/main.js examples/array-methods.is
+
 # Run specific file
 node src/main.js path/to/your/file.is
 ```
@@ -68,19 +87,123 @@ node src/main.js path/to/your/file.is
 npm run repl
 
 # In REPL, type Inertz Script code:
-inertz> var x = [1, 2, 3];
-inertz> for (var i in x) { 
-...       if (i == 1) continue;
-...       print(i, x[i]); 
-...     }
-0 1
-2 3
+inertz> var numbers = [1, 2, 3, 4, 5];
+inertz> var doubled = map(numbers, function(x) { return x * 2; });
+inertz> print(doubled);
+[2, 4, 6, 8, 10]
 inertz> exit
 ```
 
 ### Running Tests
 ```bash
 npm test
+```
+
+## Array Methods Examples
+
+### Map - Transform Elements
+```inertz
+var numbers = [1, 2, 3, 4, 5];
+
+// Double each number
+function double(x) {
+    return x * 2;
+}
+var doubled = map(numbers, double);
+print(doubled); // [2, 4, 6, 8, 10]
+
+// Using anonymous function
+var squared = map(numbers, function(x) {
+    return x * x;
+});
+print(squared); // [1, 4, 9, 16, 25]
+```
+
+### Filter - Select Elements
+```inertz
+var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+// Get even numbers
+function isEven(x) {
+    return x % 2 == 0;
+}
+var evens = filter(numbers, isEven);
+print(evens); // [2, 4, 6, 8, 10]
+
+// Get numbers greater than 5
+var bigNumbers = filter(numbers, function(x) {
+    return x > 5;
+});
+print(bigNumbers); // [6, 7, 8, 9, 10]
+```
+
+### Reduce - Combine Elements
+```inertz
+var numbers = [1, 2, 3, 4, 5];
+
+// Sum all numbers
+function add(acc, x) {
+    return acc + x;
+}
+var sum = reduce(numbers, add, 0);
+print(sum); // 15
+
+// Find maximum
+function max(acc, x) {
+    return x > acc ? x : acc;
+}
+var maximum = reduce(numbers, max, numbers[0]);
+print(maximum); // 5
+```
+
+### Chaining Methods
+```inertz
+var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+
+// Get even numbers, square them, then sum
+function isEven(x) { return x % 2 == 0; }
+function square(x) { return x * x; }
+function add(acc, x) { return acc + x; }
+
+var result = reduce(
+    map(
+        filter(numbers, isEven),
+        square
+    ),
+    add,
+    0
+);
+print(result); // 220 (2² + 4² + 6² + 8² + 10²)
+```
+
+### Working with Objects
+```inertz
+var people = [
+    {name: "Alice", age: 25, salary: 50000},
+    {name: "Bob", age: 30, salary: 60000},
+    {name: "Charlie", age: 35, salary: 70000}
+];
+
+// Extract names
+function getName(person) {
+    return person.name;
+}
+var names = map(people, getName);
+print(names); // ["Alice", "Bob", "Charlie"]
+
+// Filter high earners
+function isHighEarner(person) {
+    return person.salary >= 60000;
+}
+var highEarners = filter(people, isHighEarner);
+print(highEarners); // [{name: "Bob", ...}, {name: "Charlie", ...}]
+
+// Calculate total salary
+function addSalary(acc, person) {
+    return acc + person.salary;
+}
+var totalSalary = reduce(people, addSalary, 0);
+print(totalSalary); // 180000
 ```
 
 ## Example Code
@@ -107,29 +230,17 @@ for (var index in numbers) {
     print("Odd number:", numbers[index]);
 }
 
-// While loop with break and continue
-var count = 0;
-while (count < 10) {
-    count = count + 1;
-    if (count % 3 == 0) {
-        continue; // Skip multiples of 3
-    }
-    if (count > 7) {
-        break; // Exit when count > 7
-    }
-    print("Count:", count);
-}
+// Array methods - functional programming style
+function isEven(x) { return x % 2 == 0; }
+function double(x) { return x * 2; }
+function add(acc, x) { return acc + x; }
 
-// Nested loops with break
-for (var row = 1; row <= 3; row = row + 1) {
-    for (var col = 1; col <= 3; col = col + 1) {
-        if (row == 2 && col == 2) {
-            print("Breaking inner loop");
-            break;
-        }
-        print("Position:", row, col);
-    }
-}
+var evenDoubledSum = reduce(
+    map(filter(numbers, isEven), double),
+    add,
+    0
+);
+print("Sum of doubled even numbers:", evenDoubledSum);
 ```
 
 ## Loop Control Statements
@@ -161,23 +272,6 @@ for (var i = 0; i < 5; i = i + 1) {
         continue; // Skip when i equals 2
     }
     print(i); // Prints 0, 1, 3, 4
-}
-```
-
-### Nested Loop Control
-- Break and continue only affect the innermost loop
-- To break out of multiple nested loops, use flags or function returns
-
-```inertz
-var found = false;
-for (var i = 0; i < 3 && !found; i = i + 1) {
-    for (var j = 0; j < 3; j = j + 1) {
-        if (i == 1 && j == 1) {
-            found = true;
-            break; // Only breaks inner loop
-        }
-        print(i, j);
-    }
 }
 ```
 
@@ -242,7 +336,8 @@ inertz-script/
 │   ├── calculator.is   # Simple calculator
 │   ├── arrays-objects.is # Arrays and objects demo
 │   ├── for-loops.is    # For loops demonstration
-│   └── break-continue.is # Break and continue examples
+│   ├── break-continue.is # Break and continue examples
+│   └── array-methods.is # Array methods demonstration
 └── README.md
 ```
 
@@ -258,6 +353,7 @@ Inertz Script follows these design principles:
 6. **Rich Data Types**: Support for arrays and objects with intuitive syntax
 7. **Flexible Iteration**: Multiple loop types for different use cases
 8. **Structured Control Flow**: Break and continue for precise loop control
+9. **Functional Programming**: Array methods for elegant data transformation
 
 ## Technical Implementation
 
@@ -269,31 +365,38 @@ Inertz Script follows these design principles:
 - **Data Structures**: Native JavaScript arrays and objects with Inertz Script syntax
 - **Loop Constructs**: Traditional for loops and for-in iteration
 - **Exception Handling**: Break and continue implemented as controlled exceptions
+- **Array Methods**: Functional programming support with map, filter, reduce, and more
 
-## Control Flow Features
+## Array Methods Features
 
-### Exception-Based Control Flow
-- Break and continue are implemented using JavaScript exceptions
-- Exceptions are caught and handled appropriately within loop constructs
-- Only affects the immediate containing loop (proper scoping)
+### Functional Programming Support
+- Higher-order functions that accept callback functions
+- Immutable operations (original arrays are not modified by map/filter)
+- Chainable operations for complex data transformations
+- Support for both named functions and anonymous function expressions
 
-### Loop Scoping
-- Each loop creates its own environment scope
-- Variables declared in loop initializers are properly scoped
-- Break and continue respect lexical scoping rules
+### Method Signatures
+- `map(array, callback)` - callback receives (element, index, array)
+- `filter(array, callback)` - callback receives (element, index, array)
+- `reduce(array, callback, initialValue)` - callback receives (accumulator, element, index, array)
+- `find(array, callback)` - returns first matching element or null
+- `some(array, callback)` - returns true if any element matches
+- `every(array, callback)` - returns true if all elements match
 
 ### Error Handling
-- Break and continue outside of loops result in runtime errors
+- Type checking ensures methods are called on arrays
+- Callback validation ensures functions are provided
 - Proper error messages guide developers to correct usage
-- Nested loop behavior is clearly defined and predictable
+- Reduce handles empty arrays appropriately
 
 ## Future Enhancements
 
 - Labeled break and continue statements
-- Array methods (map, filter, reduce)
+- More array methods (forEach, indexOf, includes, slice, splice)
 - Object methods and prototypes
 - Import/export system
 - Standard library modules
 - Bytecode compilation
 - Debugging support
 - Exception handling (try/catch/finally)
+- Arrow functions for more concise callbacks

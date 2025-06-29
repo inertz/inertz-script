@@ -1,0 +1,287 @@
+// Array Methods demonstration in Inertz Script
+
+print("=== Array Methods (map, filter, reduce) ===");
+
+// Sample data
+var numbers = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+var people = [
+    {name: "Alice", age: 25, salary: 50000},
+    {name: "Bob", age: 30, salary: 60000},
+    {name: "Charlie", age: 35, salary: 70000},
+    {name: "Diana", age: 28, salary: 55000},
+    {name: "Eve", age: 32, salary: 65000}
+];
+
+print("Original numbers:", numbers);
+print("Original people:", people);
+
+print("\n=== MAP Examples ===");
+
+// Map: Transform each element
+function double(x) {
+    return x * 2;
+}
+
+function square(x) {
+    return x * x;
+}
+
+var doubled = map(numbers, double);
+print("Doubled numbers:", doubled);
+
+var squared = map(numbers, square);
+print("Squared numbers:", squared);
+
+// Map with anonymous function (using function expressions)
+var tripled = map(numbers, function(x) {
+    return x * 3;
+});
+print("Tripled numbers:", tripled);
+
+// Map on objects - extract names
+function getName(person) {
+    return person.name;
+}
+
+var names = map(people, getName);
+print("Names:", names);
+
+// Map to calculate annual bonus (10% of salary)
+function calculateBonus(person) {
+    return {
+        name: person.name,
+        bonus: person.salary * 0.1
+    };
+}
+
+var bonuses = map(people, calculateBonus);
+print("Bonuses:", bonuses);
+
+print("\n=== FILTER Examples ===");
+
+// Filter: Keep elements that match condition
+function isEven(x) {
+    return x % 2 == 0;
+}
+
+function isOdd(x) {
+    return x % 2 != 0;
+}
+
+var evenNumbers = filter(numbers, isEven);
+print("Even numbers:", evenNumbers);
+
+var oddNumbers = filter(numbers, isOdd);
+print("Odd numbers:", oddNumbers);
+
+// Filter numbers greater than 5
+function greaterThanFive(x) {
+    return x > 5;
+}
+
+var bigNumbers = filter(numbers, greaterThanFive);
+print("Numbers > 5:", bigNumbers);
+
+// Filter people by age
+function isAdult(person) {
+    return person.age >= 30;
+}
+
+function isYoung(person) {
+    return person.age < 30;
+}
+
+var adults = filter(people, isAdult);
+print("Adults (30+):", adults);
+
+var youngPeople = filter(people, isYoung);
+print("Young people (<30):", youngPeople);
+
+// Filter high earners
+function isHighEarner(person) {
+    return person.salary >= 60000;
+}
+
+var highEarners = filter(people, isHighEarner);
+print("High earners (60k+):", highEarners);
+
+print("\n=== REDUCE Examples ===");
+
+// Reduce: Combine all elements into single value
+function add(acc, x) {
+    return acc + x;
+}
+
+function multiply(acc, x) {
+    return acc * x;
+}
+
+var sum = reduce(numbers, add, 0);
+print("Sum of numbers:", sum);
+
+var product = reduce(numbers, multiply, 1);
+print("Product of numbers:", product);
+
+// Find maximum using reduce
+function max(acc, x) {
+    return x > acc ? x : acc;
+}
+
+var maximum = reduce(numbers, max, numbers[0]);
+print("Maximum number:", maximum);
+
+// Find minimum using reduce
+function min(acc, x) {
+    return x < acc ? x : acc;
+}
+
+var minimum = reduce(numbers, min, numbers[0]);
+print("Minimum number:", minimum);
+
+// Calculate total salary
+function addSalary(acc, person) {
+    return acc + person.salary;
+}
+
+var totalSalary = reduce(people, addSalary, 0);
+print("Total salary:", totalSalary);
+
+// Calculate average age
+function addAge(acc, person) {
+    return acc + person.age;
+}
+
+var totalAge = reduce(people, addAge, 0);
+var averageAge = totalAge / len(people);
+print("Average age:", averageAge);
+
+// Build a string from names
+function joinNames(acc, person) {
+    return acc == "" ? person.name : acc + ", " + person.name;
+}
+
+var allNames = reduce(people, joinNames, "");
+print("All names:", allNames);
+
+print("\n=== CHAINING Examples ===");
+
+// Chain multiple array methods together
+// Get even numbers, square them, then sum
+var evenSquaredSum = reduce(
+    map(
+        filter(numbers, isEven),
+        square
+    ),
+    add,
+    0
+);
+print("Sum of squared even numbers:", evenSquaredSum);
+
+// Get high earners, extract their names, join with " & "
+function joinWithAnd(acc, name) {
+    return acc == "" ? name : acc + " & " + name;
+}
+
+var highEarnerNames = reduce(
+    map(
+        filter(people, isHighEarner),
+        getName
+    ),
+    joinWithAnd,
+    ""
+);
+print("High earner names:", highEarnerNames);
+
+print("\n=== ADDITIONAL ARRAY METHODS ===");
+
+// Find: Get first element that matches condition
+var firstEven = find(numbers, isEven);
+print("First even number:", firstEven);
+
+var firstAdult = find(people, isAdult);
+print("First adult:", firstAdult);
+
+// Some: Check if any element matches condition
+var hasEvenNumbers = some(numbers, isEven);
+print("Has even numbers:", hasEvenNumbers);
+
+var hasHighEarners = some(people, isHighEarner);
+print("Has high earners:", hasHighEarners);
+
+// Every: Check if all elements match condition
+function isPositive(x) {
+    return x > 0;
+}
+
+var allPositive = every(numbers, isPositive);
+print("All numbers positive:", allPositive);
+
+function hasName(person) {
+    return person.name != null && person.name != "";
+}
+
+var allHaveNames = every(people, hasName);
+print("All people have names:", allHaveNames);
+
+print("\n=== PRACTICAL EXAMPLES ===");
+
+// Example 1: Process shopping cart
+var cart = [
+    {item: "Apple", price: 1.50, quantity: 3},
+    {item: "Banana", price: 0.80, quantity: 6},
+    {item: "Orange", price: 2.00, quantity: 2},
+    {item: "Milk", price: 3.50, quantity: 1}
+];
+
+print("Shopping cart:", cart);
+
+// Calculate total for each item
+function calculateItemTotal(item) {
+    return {
+        item: item.item,
+        total: item.price * item.quantity
+    };
+}
+
+var itemTotals = map(cart, calculateItemTotal);
+print("Item totals:", itemTotals);
+
+// Calculate grand total
+function addTotal(acc, item) {
+    return acc + item.total;
+}
+
+var grandTotal = reduce(itemTotals, addTotal, 0);
+print("Grand total: $" + grandTotal);
+
+// Example 2: Student grade processing
+var students = [
+    {name: "John", grades: [85, 92, 78, 96]},
+    {name: "Jane", grades: [88, 94, 91, 87]},
+    {name: "Bob", grades: [76, 82, 79, 85]},
+    {name: "Alice", grades: [95, 98, 92, 97]}
+];
+
+print("\nStudent grades:", students);
+
+// Calculate average grade for each student
+function calculateAverage(student) {
+    var total = reduce(student.grades, add, 0);
+    return {
+        name: student.name,
+        average: total / len(student.grades)
+    };
+}
+
+var averages = map(students, calculateAverage);
+print("Student averages:", averages);
+
+// Find students with high averages (>= 90)
+function hasHighAverage(student) {
+    return student.average >= 90;
+}
+
+var topStudents = filter(averages, hasHighAverage);
+print("Top students (avg >= 90):", topStudents);
+
+print("\nArray methods demonstration completed!");
