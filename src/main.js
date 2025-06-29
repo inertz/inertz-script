@@ -49,7 +49,7 @@ function main() {
 
   if (args.length === 0) {
     console.log('Inertz Script v1.0.0');
-    console.log('Usage: node src/main.js <file.bn>');
+    console.log('Usage: node src/main.js <file.is>');
     console.log('       npm run repl  # Start interactive REPL');
     process.exit(0);
   }
@@ -58,7 +58,7 @@ function main() {
     const inertz = new InertzScript();
     inertz.runFile(args[0]);
   } else {
-    console.log('Usage: node src/main.js <file.bn>');
+    console.log('Usage: node src/main.js <file.is>');
     process.exit(1);
   }
 }

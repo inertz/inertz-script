@@ -8,7 +8,7 @@
     "start": "node src/main.js",
     "repl": "node src/repl.js",
     "test": "node src/test.js",
-    "example": "node src/main.js examples/demo.bn"
+    "example": "node src/main.js examples/demo.is"
   },
   "keywords": ["interpreter", "programming-language", "inertz-script"],
   "author": "Inertz Script Team",

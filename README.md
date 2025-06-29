@@ -46,20 +46,20 @@ A JavaScript-inspired interpreted programming language with C++-like structure, 
 npm install
 
 # Run a Inertz Script file
-npm start examples/demo.bn
+npm start examples/demo.is
 npm run example
 
 # Run arrays and objects example
-node src/main.js examples/arrays-objects.bn
+node src/main.js examples/arrays-objects.is
 
 # Run for loops example
-node src/main.js examples/for-loops.bn
+node src/main.js examples/for-loops.is
 
 # Run break and continue example
-node src/main.js examples/break-continue.bn
+node src/main.js examples/break-continue.is
 
 # Run specific file
-node src/main.js path/to/your/file.bn
+node src/main.js path/to/your/file.is
 ```
 
 ### Interactive REPL
@@ -237,12 +237,12 @@ inertz-script/
 │   ├── token.js        # Token definitions
 │   └── test.js         # Test suite
 ├── examples/
-│   ├── demo.bn         # Language showcase
-│   ├── fibonacci.bn    # Fibonacci sequence
-│   ├── calculator.bn   # Simple calculator
-│   ├── arrays-objects.bn # Arrays and objects demo
-│   ├── for-loops.bn    # For loops demonstration
-│   └── break-continue.bn # Break and continue examples
+│   ├── demo.is         # Language showcase
+│   ├── fibonacci.is    # Fibonacci sequence
+│   ├── calculator.is   # Simple calculator
+│   ├── arrays-objects.is # Arrays and objects demo
+│   ├── for-loops.is    # For loops demonstration
+│   └── break-continue.is # Break and continue examples
 └── README.md
 ```
 
